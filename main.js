@@ -58,10 +58,10 @@ const clothingDatabase = {
         }
     },
     "outfit_top": {
-        "hoodie": { 
-            name: "Baggy Hoodie", 
+        "sweater": {
+            name: "Baggy Sweater",
             stats: { cautious: 2, bold: -2, curious: 0 },
-            imageUrl: "https://placehold.co/320x427/ffffff/333333?text=Hoodie" // Placeholder for 'sweater01.jpg'
+            imageUrl: "https://preview.redd.it/new-clothes-im-going-to-stop-soon-and-buckle-down-on-the-v0-crg60v296tzf1.jpg?width=320&crop=smart&auto=webp&s=b716074f2fd74a105c7da6db61385d3c13021033"
         },
         "top": {
             name: "Form-Fitting Top",
@@ -71,14 +71,14 @@ const clothingDatabase = {
     },
     "outfit_bottom": {
         "jeans": {
-            name: "Jeans",
+            name: "Tight Blue Jeans",
             stats: { cautious: 1, bold: 0, curious: 0 },
-            imageUrl: "https://placehold.co/320x427/ffffff/333333?text=Jeans"
+            imageUrl: "https://preview.redd.it/new-clothes-im-going-to-stop-soon-and-buckle-down-on-the-v0-y84gfvs76tzf1.jpg?width=320&crop=smart&auto=webp&s=7e53684b4209fc4abe92b083b79961778fe3548a"
         },
-        "skirt": {
-            name: "Short Skirt",
-            stats: { cautious: -1, bold: 2, curious: 1 },
-            imageUrl: "https://placehold.co/320x427/ffffff/333333?text=Skirt"
+        "trousers": {
+            name: "Loose Linen Trousers",
+            stats: { cautious: 0, bold: 0, curious: 0 },
+            imageUrl: "https://placehold.co/320x427/ffffff/333333?text=Trousers"
         }
     },
     "outfit_all": {
@@ -90,9 +90,14 @@ const clothingDatabase = {
     },
     "shoes": { // Added shoes as a category
         "chucks": {
-            name: "White Chucks",
+            name: "White Converse",
             stats: { cautious: 0, bold: 0, curious: 0 },
-            imageUrl: "https://placehold.co/320x427/ffffff/333333?text=Shoes" // Placeholder for 'WhiteChucks01.jpg'
+            imageUrl: "https://preview.redd.it/new-clothes-im-going-to-stop-soon-and-buckle-down-on-the-v0-ay7utzd86tzf1.jpg?width=320&crop=smart&auto=webp&s=6499de54015a94400f9ddf58b7f20b274baa4c71"
+        },
+        "heels": {
+            name: "Red Stiletto Pump",
+            stats: { cautious: 0, bold: 0, curious: 0 },
+            imageUrl: "https://placehold.co/320x427/ffffff/333333?text=Heels"
         },
         "none": {
             name: "Barefoot",
@@ -190,10 +195,34 @@ let gameState = {
 };
 
 // --- DOM Element References ---
-let narrativeContainer, choicesContainer, meterBarCautious, meterBarCurious, meterBarBold, characterImage, sceneImage, loadingOverlay, saveButton, loadButton, beginButton, continueButton;
+let narrativeContainer, choicesContainer, meterBarCautious, meterBarCurious, meterBarBold, characterImage, sceneImage, loadingOverlay, saveButton, loadButton, beginButton, continueButton, wardrobeButton;
 
 // Set a maximum value for the meters to calculate percentages
-const MAX_STAT_VALUE = 10; 
+const MAX_STAT_VALUE = 10;
+
+const wardrobeData = {
+    "top": {
+        narrative: "What will Lily wear on top?",
+        choices: [
+            { text: "Baggy Sweater", key: "sweater", category: "outfit_top", nextStep: "bottom", functional: true },
+            { text: "Form-Fitting Top", key: "top", category: "outfit_top", nextStep: "bottom", functional: false }
+        ]
+    },
+    "bottom": {
+        narrative: "What will Lily wear on the bottom?",
+        choices: [
+            { text: "Tight Blue Jeans", key: "jeans", category: "outfit_bottom", nextStep: "shoes", functional: true },
+            { text: "Loose Linen Trousers", key: "trousers", category: "outfit_bottom", nextStep: "shoes", functional: false }
+        ]
+    },
+    "shoes": {
+        narrative: "What shoes will Lily wear?",
+        choices: [
+            { text: "White Converse", key: "chucks", category: "shoes", nextStep: "end", functional: true },
+            { text: "Red Stiletto Pump", key: "heels", category: "shoes", nextStep: "end", functional: false }
+        ]
+    }
+};
 
 /**
  * Recalculates the player's stats based on equipped items.
@@ -698,7 +727,65 @@ document.addEventListener('DOMContentLoaded', () => {
         generateNarrative(gameState.currentScene);
     };
 
+    wardrobeButton = document.getElementById('wardrobe-button');
+
+    // Add event listeners
+    saveButton.onclick = saveGame;
+    loadButton.onclick = loadGame;
+    beginButton.onclick = () => {
+        renderScene(gameState.currentScene);
+        beginButton.classList.add('hidden');
+        continueButton.classList.remove('hidden');
+    };
+    continueButton.onclick = () => {
+        // This assumes the AI's response will trigger the next scene or choices.
+        // If not, you'll need to add logic here to advance the scene.
+        generateNarrative(gameState.currentScene);
+    };
+    wardrobeButton.onclick = () => {
+        gameState.stats = { cautious: 0, curious: 0, bold: 0 };
+        updateMeters();
+        renderWardrobeStep("top");
+    };
+
     // Start the game by initializing Firebase
     // This will, in turn, call renderScene
     initializeFirebase();
 });
+
+function renderWardrobeStep(step) {
+    if (step === "end") {
+        narrativeContainer.innerHTML = `<p class="mb-4">Outfit Selected</p>`;
+        choicesContainer.innerHTML = '';
+        return;
+    }
+
+    const stepData = wardrobeData[step];
+    if (!stepData) {
+        console.error(`Wardrobe step '${step}' not found!`);
+        return;
+    }
+
+    narrativeContainer.innerHTML = `<p class="mb-4">${stepData.narrative}</p>`;
+    choicesContainer.innerHTML = '';
+
+    stepData.choices.forEach(choice => {
+        const button = document.createElement('button');
+        button.textContent = choice.text;
+        if (choice.functional) {
+            button.className = "choice-button w-full p-3 bg-indigo-500 rounded-lg text-left text-white hover:bg-indigo-600";
+            button.onclick = () => {
+                gameState.equipped[choice.category] = choice.key;
+                const item = clothingDatabase[choice.category]?.[choice.key];
+                if (item && item.imageUrl) {
+                    characterImage.src = item.imageUrl;
+                }
+                renderWardrobeStep(choice.nextStep);
+            };
+        } else {
+            button.className = "choice-button w-full p-3 bg-gray-700 rounded-lg text-left text-gray-400 cursor-not-allowed";
+            button.disabled = true;
+        }
+        choicesContainer.appendChild(button);
+    });
+}
