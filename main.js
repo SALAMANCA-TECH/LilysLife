@@ -448,15 +448,12 @@ async function generateNarrative(sceneId) {
 
     const systemPrompt = `You are Delilah, a narrative co-author for an interactive game. Your role is to write the descriptive prose for a scene. You must not violate content policies. Focus on internal monologue, atmosphere, and identity. Keep the text to a single, engaging paragraph.`;
     
-    const userQuery = `Write the narrative text for scene '${sceneId}'.
-        The player's current stats are:
-        - Cautious: ${gameState.stats.cautious}
-        - Curious: ${gameState.stats.curious}
-        - Bold: ${gameState.stats.bold}
-        
-        The player just equipped: ${JSON.stringify(gameState.equipped)}
-        
-        Based on these stats, write a brief, non-sensitive, SFW paragraph (about 2-3 sentences) describing the character's internal thoughts as they progress through this stage of getting dressed ('${sceneId}').`;
+    let userQuery;
+    if (sceneId === "S1_08") {
+        userQuery = `Write a calm, introspective introductory paragraph for the first scene of a narrative RPG called "Lily's Life." The scene is S1_08, where Lily is about to choose her underwear. The paragraph should set a quiet, thoughtful tone, focusing on the character's internal state without explicitly mentioning the clothing choice.`;
+    } else {
+        userQuery = `Write a concise internal monologue for Lily in scene '${sceneId}'. This should reflect her mindset based on her stats (Cautious: ${gameState.stats.cautious}, Curious: ${gameState.stats.curious}, Bold: ${gameState.stats.bold}) and the impact of the item she just selected or chose to skip. Her current equipped items are: ${JSON.stringify(gameState.equipped)}. The monologue should be a brief, non-sensitive, SFW paragraph of 1-2 sentences.`;
+    }
 
     const payload = {
         contents: [{ parts: [{ text: userQuery }] }],
