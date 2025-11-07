@@ -2,7 +2,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 import { getFirestore, doc, setDoc, getDoc, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-import { apiKey as configApiKey } from './config.js';
+import configApiKey from './config.js';
 
 // --- V2.0 DATABASE DEFINITIONS ---
 
@@ -10,7 +10,7 @@ import { apiKey as configApiKey } from './config.js';
 // NOTE: These variables are 'undefined' in a local environment.
 // You will need to replace them with your actual Firebase config and API key for local testing.
 const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-const apiKey = configApiKey || ""; // <-- PASTE YOUR GEMINI API KEY HERE FOR LOCAL TESTING
+const apiKey = configApiKey || "";
 const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}'); // <-- PASTE YOUR FIREBASE CONFIG OBJECT HERE
 let db, auth, userId;
 
