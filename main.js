@@ -190,7 +190,7 @@ let gameState = {
 };
 
 // --- DOM Element References ---
-let narrativeContainer, choicesContainer, meterBarCautious, meterBarCurious, meterBarBold, characterImage, sceneImage, loadingOverlay, saveButton, loadButton;
+let narrativeContainer, choicesContainer, meterBarCautious, meterBarCurious, meterBarBold, characterImage, sceneImage, loadingOverlay, saveButton, loadButton, beginButton, continueButton;
 
 // Set a maximum value for the meters to calculate percentages
 const MAX_STAT_VALUE = 10; 
@@ -625,8 +625,7 @@ async function initializeFirebase() {
         if (saveButton) saveButton.disabled = true;
         if (loadButton) loadButton.disabled = true;
         
-        // Render the first scene without auth
-        await renderScene(gameState.currentScene);
+        // Do not render the scene on initial load, wait for user to click "Begin"
         updateMeters();
         return; // Stop initialization
     }
@@ -652,15 +651,13 @@ async function initializeFirebase() {
         gameState.userId = userId;
         console.log("Firebase Initialized. User ID:", userId);
         
-        // Now that Firebase is ready, render the first scene
-        await renderScene(gameState.currentScene);
+        // Now that Firebase is ready, the user can begin the game.
         updateMeters();
 
     } catch (error) {
         console.error("Firebase initialization error:", error);
         narrativeContainer.innerHTML = `<p class="mb-4 text-red-400">Error: Firebase connection failed. ${error.message}</p>`;
-        // Still try to render the scene, but save/load will fail
-        await renderScene(gameState.currentScene);
+        // Still try to update meters, but the game won't start
         updateMeters();
     }
 }
@@ -683,10 +680,23 @@ document.addEventListener('DOMContentLoaded', () => {
     loadingOverlay = document.getElementById('loading-overlay');
     saveButton = document.getElementById('save-button');
     loadButton = document.getElementById('load-button');
+    beginButton = document.getElementById('begin-button');
+    continueButton = document.getElementById('continue-button');
 
-    // Add event listeners for save/load
+
+    // Add event listeners
     saveButton.onclick = saveGame;
     loadButton.onclick = loadGame;
+    beginButton.onclick = () => {
+        renderScene(gameState.currentScene);
+        beginButton.classList.add('hidden');
+        continueButton.classList.remove('hidden');
+    };
+    continueButton.onclick = () => {
+        // This assumes the AI's response will trigger the next scene or choices.
+        // If not, you'll need to add logic here to advance the scene.
+        generateNarrative(gameState.currentScene);
+    };
 
     // Start the game by initializing Firebase
     // This will, in turn, call renderScene
