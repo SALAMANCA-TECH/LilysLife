@@ -185,6 +185,64 @@ const storyData = {
     }
 };
 
+const narrativeTimeline = {
+    "P1": {
+        narrative: "P1: The Awakening. Placeholder text.",
+        choices: [
+            { text: "Cautious", flag: "initialMindset", value: "cautious", nextPart: "P2" },
+            { text: "Curious", flag: "initialMindset", value: "curious", nextPart: "P2" },
+            { text: "Bold", flag: "initialMindset", value: "bold", nextPart: "P2" }
+        ]
+    },
+    "P2": {
+        narrative: "P2: The Commute. Placeholder text.",
+        choices: [
+            { text: "Bike", flag: "commuteMethod", value: "bike", nextPart: "P3" },
+            { text: "Bus", flag: "commuteMethod", value: "bus", nextPart: "P3" },
+            { text: "Walk", flag: "commuteMethod", value: "walk", nextPart: "P3" }
+        ]
+    },
+    "P3": {
+        narrative: "P3: The Work Drop. Placeholder text.",
+        choices: [
+            { text: "Avoid", flag: "alexRelationship", value: "avoid", nextPart: "P4" },
+            { text: "Observe", flag: "alexRelationship", value: "observe", nextPart: "P4" },
+            { text: "Confront", flag: "alexRelationship", value: "confront", nextPart: "P4" }
+        ]
+    },
+    "P4": {
+        narrative: "P4: Business Class. Placeholder text.",
+        choices: [
+            { text: "Quiet", flag: "participation", value: "quiet", nextPart: "P5" },
+            { text: "Analytical", flag: "participation", value: "analytical", nextPart: "P5" },
+            { text: "Vocal", flag: "participation", value: "vocal", nextPart: "P5" }
+        ]
+    },
+    "P5": {
+        narrative: "P5: Wrestling Practice. Placeholder text.",
+        choices: [
+            { text: "Cautious", flag: "practiceControl", value: "humiliated", nextPart: "P6" },
+            { text: "Curious", flag: "practiceControl", value: "analyzed", nextPart: "P6" },
+            { text: "Bold", flag: "practiceControl", value: "dominant", nextPart: "P6" }
+        ]
+    },
+    "P6": {
+        narrative: "P6: Confession & Prep. Placeholder text.",
+        choices: [
+            { text: "Closet", flag: "mitchBond", value: "friend", nextPart: "P7" },
+            { text: "Shopping", flag: "mitchBond", value: "blurry", nextPart: "P7" },
+            { text: "Something else", flag: "mitchBond", value: "intimate", nextPart: "P7" }
+        ]
+    },
+    "P7": {
+        narrative: "P7: The Bar. Placeholder text.",
+        choices: [
+            { text: "Support Mitch", flag: "conflictWinner", value: "mitch", nextPart: "END" },
+            { text: "Invite Stranger", flag: "conflictWinner", value: "stranger", nextPart: "END" }
+        ]
+    }
+};
+
 // --- V2.0 GAME LOGIC ---
 
 /**
@@ -213,7 +271,19 @@ let gameState = {
         intent: null
     },
     currentScene: "S1_08",
-    userId: null // Will be set after auth
+    userId: null, // Will be set after auth
+
+    // Narrative Timeline Flags
+    currentPart: "P1",
+    initialMindset: null,
+    commuteMethod: null,
+    alexRelationship: null,
+    isLateForClass: false,
+    participation: null,
+    practiceControl: null,
+    mitchBond: null,
+    conflictWinner: null,
+    finalBond: null
 };
 
 // --- DOM Element References ---
@@ -628,6 +698,30 @@ function handleChoice(choice) {
 }
 
 /**
+ * Handles a player's choice in the narrative timeline.
+ */
+function handleNarrativeChoice(choice) {
+    const { flag, value, nextPart } = choice;
+
+    // Update the gameState with the new flag
+    if (flag) {
+        gameState[flag] = value;
+    }
+
+    // Special logic for P2 commute outcomes
+    if (gameState.currentPart === "P2" && flag === "commuteMethod") {
+        if (value === "walk") {
+            gameState.isLateForClass = true;
+        } else {
+            gameState.isLateForClass = false;
+        }
+    }
+
+    // Advance to the next part of the story
+    renderNarrativeScene(nextPart);
+}
+
+/**
  * Renders a new scene in the UI.
  * NOW calls AI for narrative text.
  */
@@ -666,6 +760,79 @@ async function renderScene(sceneId) {
         await generateCharacterImage();
     }
 }
+
+/**
+ * Renders a narrative scene from the timeline.
+ */
+function renderNarrativeScene(partId) {
+    gameState.currentPart = partId;
+    const part = narrativeTimeline[partId];
+
+    if (partId === "END") {
+        narrativeContainer.innerHTML = `<p class="mb-4">The story concludes for now.</p>`;
+        choicesContainer.innerHTML = ''; // Clear choices
+        // Optionally, add a button to restart the narrative
+        const restartButton = document.createElement('button');
+        restartButton.textContent = "Start Over";
+        restartButton.className = "choice-button w-full p-3 bg-indigo-500 rounded-lg text-left text-white hover:bg-indigo-600";
+        restartButton.onclick = () => {
+            // This could reset the narrative flags and go back to P1 or the wardrobe
+            renderWardrobeStep("top");
+        };
+        choicesContainer.appendChild(restartButton);
+        return;
+    }
+
+    if (!part) {
+        console.error(`Narrative part '${partId}' not found!`);
+        narrativeContainer.innerHTML = `<p class="mb-4 text-red-400">Error: Narrative part not found.</p>`;
+        return;
+    }
+
+    // --- Consequence Checks & Narrative Modification ---
+    let narrative = part.narrative; // Start with the default narrative
+
+    // P4 Check: Is the player late for class?
+    if (partId === "P4" && gameState.isLateForClass) {
+        narrative = "Arriving late after the walk, Lily slips into the classroom, trying to be unnoticed. " + narrative;
+    }
+
+    // P7 Check: What is the bond with Mitch?
+    if (partId === "P7") {
+        switch (gameState.mitchBond) {
+            case "friend":
+                narrative = "P7 [Friend]: At the bar, the goal is survival, a safe harbor. The noise of the crowd feels like a wall between Lily and the world." + narrative;
+                break;
+            case "blurry":
+                narrative = "P7 [Blurry]: The air in the bar is thick with unspoken tension. A choice hangs in the air between the familiar face of Mitch and the allure of a stranger." + narrative;
+                break;
+            case "intimate":
+                narrative = "P7 [Intimate]: This isn't just a night out; it's a victory lap. Every glance from Mitch feels like a shared secret, a celebration of boundaries pushed together." + narrative;
+                break;
+        }
+    }
+
+    // Update narrative text
+    narrativeContainer.innerHTML = `<p class="mb-4">${narrative}</p>`;
+
+    // Clear old choices
+    choicesContainer.innerHTML = '';
+
+    // Create and append new choices
+    part.choices.forEach((choice, index) => {
+        const button = document.createElement('button');
+        button.textContent = choice.text;
+        button.className = "choice-button w-full p-3 bg-gray-700 rounded-lg text-left text-indigo-300 hover:bg-indigo-600 hover:text-white transform opacity-0 translate-y-2";
+        button.onclick = () => handleNarrativeChoice(choice);
+        choicesContainer.appendChild(button);
+
+        // Animate choices in
+        setTimeout(() => {
+            button.classList.remove('opacity-0', 'translate-y-2');
+        }, 100 * (index + 1));
+    });
+}
+
 
 /**
  * Initializes Firebase connection.
@@ -780,8 +947,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function renderWardrobeStep(step) {
     if (step === "end") {
-        narrativeContainer.innerHTML = `<p class="mb-4">Outfit Selected</p>`;
-        choicesContainer.innerHTML = '';
+        renderNarrativeScene("P1"); // Start the narrative timeline
         return;
     }
 
