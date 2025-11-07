@@ -22,6 +22,13 @@ const ALL_STATS = [
     'eloquent', 'stuttering'
 ];
 
+// Maps the 21 stats to the three core mindsets.
+const mindsetCategories = {
+    bold: ['bold', 'intimidating', 'alluring', 'dishonorable', 'expressive', 'agile', 'enduring', 'eloquent'],
+    curious: ['curious', 'charming', 'secure', 'logical', 'creative', 'perceptive'],
+    cautious: ['cautious', 'honorable', 'insecure', 'reserved', 'clumsy', 'feeble', 'stuttering']
+};
+
 // --- Firebase & API Globals ---
 // NOTE: These variables are 'undefined' in a local environment.
 // You will need to replace them with your actual Firebase config and API key for local testing.
@@ -187,58 +194,58 @@ const storyData = {
 
 const narrativeTimeline = {
     "P1": {
-        narrative: "P1: The Awakening. Placeholder text.",
+        narrative: "[P1: The Awakening] The morning light filters through the blinds. Another day. How will you face it?",
         choices: [
-            { text: "Cautious", flag: "initialMindset", value: "cautious", nextPart: "P2" },
-            { text: "Curious", flag: "initialMindset", value: "curious", nextPart: "P2" },
-            { text: "Bold", flag: "initialMindset", value: "bold", nextPart: "P2" }
+            { text: "With caution. Keep your head down.", mindset: "cautious", nextPart: "P2" },
+            { text: "With curiosity. See what happens.", mindset: "curious", nextPart: "P2" },
+            { text: "With boldness. Take control.", mindset: "bold", nextPart: "P2" }
         ]
     },
     "P2": {
-        narrative: "P2: The Commute. Placeholder text.",
+        narrative: "[P2: The Commute] Time to get to the university. How will you travel?",
         choices: [
-            { text: "Bike", flag: "commuteMethod", value: "bike", nextPart: "P3" },
-            { text: "Bus", flag: "commuteMethod", value: "bus", nextPart: "P3" },
-            { text: "Walk", flag: "commuteMethod", value: "walk", nextPart: "P3" }
+            { text: "Take the bus. It's crowded, but efficient.", flag: "commuteMethod", value: "bus", nextPart: "P3" },
+            { text: "Ride your bike. It's risky, but freeing.", flag: "commuteMethod", value: "bike", nextPart: "P3" },
+            { text: "Walk. It's slow, but gives you time to think.", flag: "commuteMethod", value: "walk", nextPart: "P3" }
         ]
     },
     "P3": {
-        narrative: "P3: The Work Drop. Placeholder text.",
+        narrative: "[P3: The Work Drop] You pass by Alex's office. They're a minor rival, a social obstacle.",
         choices: [
-            { text: "Avoid", flag: "alexRelationship", value: "avoid", nextPart: "P4" },
-            { text: "Observe", flag: "alexRelationship", value: "observe", nextPart: "P4" },
-            { text: "Confront", flag: "alexRelationship", value: "confront", nextPart: "P4" }
+            { text: "Avoid eye contact and hurry past.", flag: "alexRelationship", value: "avoid", nextPart: "P4" },
+            { text: "Slow down and observe their interaction.", flag: "alexRelationship", value: "observe", nextPart: "P4" },
+            { text: "Offer a sharp, confrontational greeting.", flag: "alexRelationship", value: "confront", nextPart: "P4" }
         ]
     },
     "P4": {
-        narrative: "P4: Business Class. Placeholder text.",
+        narrative: "[P4: Business Class] The lecture is underway. What is your role in the discussion?",
         choices: [
-            { text: "Quiet", flag: "participation", value: "quiet", nextPart: "P5" },
-            { text: "Analytical", flag: "participation", value: "analytical", nextPart: "P5" },
-            { text: "Vocal", flag: "participation", value: "vocal", nextPart: "P5" }
+            { text: "Stay quiet and just take notes.", flag: "participation", value: "quiet", nextPart: "P5" },
+            { text: "Listen intently, analyzing every point.", flag: "participation", value: "analytical", nextPart: "P5" },
+            { text: "Be vocal, challenging the professor's ideas.", flag: "participation", value: "vocal", nextPart: "P5" }
         ]
     },
     "P5": {
-        narrative: "P5: Wrestling Practice. Placeholder text.",
+        narrative: "[P5: Wrestling Practice] The gym is hot, the atmosphere intense. You're paired with a stronger opponent. How do you react to their physical dominance?",
         choices: [
-            { text: "Cautious", flag: "practiceControl", value: "humiliated", nextPart: "P6" },
-            { text: "Curious", flag: "practiceControl", value: "analyzed", nextPart: "P6" },
-            { text: "Bold", flag: "practiceControl", value: "dominant", nextPart: "P6" }
+            { text: "(Cautious) Yield, feeling the humiliation of the pin.", mindset: "cautious", flag: "practiceControl", value: "humiliated", nextPart: "P6" },
+            { text: "(Curious) Analyze their technique, even in defeat.", mindset: "curious", flag: "practiceControl", value: "analyzed", nextPart: "P6" },
+            { text: "(Bold) Use leverage and grit to turn the tables, dominating them.", mindset: "bold", flag: "practiceControl", value: "dominant", nextPart: "P6" }
         ]
     },
     "P6": {
-        narrative: "P6: Confession & Prep. Placeholder text.",
+        narrative: "[P6: Confession & Prep] The night looms. You're meeting Mitch at the bar. He confessed feelings for you recently. How do you prepare?",
         choices: [
-            { text: "Closet", flag: "mitchBond", value: "friend", nextPart: "P7" },
-            { text: "Shopping", flag: "mitchBond", value: "blurry", nextPart: "P7" },
-            { text: "Something else", flag: "mitchBond", value: "intimate", nextPart: "P7" }
+            { text: "Pick something from your closet. Keep it friendly.", flag: "mitchBond", value: "friend", nextPart: "P7" },
+            { text: "Go shopping. Buy something ambiguous, something that sends a blurry signal.", flag: "mitchBond", value: "blurry", nextPart: "P7" },
+            { text: "Call him. Suggest you're both looking for an intimate victory tonight.", flag: "mitchBond", value: "intimate", nextPart: "P7" }
         ]
     },
     "P7": {
-        narrative: "P7: The Bar. Placeholder text.",
+        narrative: "[P7: The Bar] The noise, the lights, the people. It's the climax of the day.",
         choices: [
-            { text: "Support Mitch", flag: "conflictWinner", value: "mitch", nextPart: "END" },
-            { text: "Invite Stranger", flag: "conflictWinner", value: "stranger", nextPart: "END" }
+            { text: "Focus on Mitch. He needs your support.", flag: "conflictWinner", value: "mitch", nextPart: "END" },
+            { text: "Your eyes meet a compelling stranger across the room. Invite them over.", flag: "conflictWinner", value: "stranger", nextPart: "END" }
         ]
     }
 };
@@ -273,17 +280,22 @@ let gameState = {
     currentScene: "S1_08",
     userId: null, // Will be set after auth
 
+    // --- New V3 Narrative State ---
+    // Mindset scores, calculated from clothing at the start.
+    mindset_cautious: 0,
+    mindset_curious: 0,
+    mindset_bold: 0,
+
     // Narrative Timeline Flags
     currentPart: "P1",
-    initialMindset: null,
-    commuteMethod: null,
-    alexRelationship: null,
-    isLateForClass: false,
-    participation: null,
-    practiceControl: null,
-    mitchBond: null,
-    conflictWinner: null,
-    finalBond: null
+    commuteMethod: null,      // Set in P2: "bike", "bus", or "walk"
+    alexRelationship: null,   // Set in P3: "avoid", "observe", or "confront"
+    isLateForClass: false,    // Set based on P2 choice ("walk" makes it true)
+    participation: null,      // Set in P4: "quiet", "analytical", or "vocal"
+    practiceControl: null,    // Set in P5: "humiliated", "analyzed", or "dominant"
+    mitchBond: null,          // Set in P6: "friend", "blurry", or "intimate"
+    conflictWinner: null,     // Set in P7: "mitch" or "stranger"
+    finalBond: null           // Set in P7: e.g., "guiltyDuty", "sanctuary"
 };
 
 // --- DOM Element References ---
@@ -342,6 +354,35 @@ function recalculateStats() {
     
     // Update the global gameState
     gameState.stats = newStats;
+}
+
+/**
+ * Calculates the initial mindset scores based on categorized stats from clothing.
+ * This is called once after the wardrobe selection is complete.
+ */
+function calculateInitialMindsetScores() {
+    // Ensure mindset scores are part of gameState and reset them
+    gameState.mindset_cautious = 0;
+    gameState.mindset_curious = 0;
+    gameState.mindset_bold = 0;
+
+    // Sum stats for each mindset category
+    for (const mindset in mindsetCategories) {
+        let total = 0;
+        mindsetCategories[mindset].forEach(stat => {
+            if (gameState.stats.hasOwnProperty(stat)) {
+                total += gameState.stats[stat];
+            }
+        });
+        // Assign the calculated total to the corresponding gameState property
+        gameState[`mindset_${mindset}`] = total;
+    }
+
+    console.log("Initial mindset scores calculated:", {
+        cautious: gameState.mindset_cautious,
+        curious: gameState.mindset_curious,
+        bold: gameState.mindset_bold
+    });
 }
 
 /**
@@ -701,20 +742,25 @@ function handleChoice(choice) {
  * Handles a player's choice in the narrative timeline.
  */
 function handleNarrativeChoice(choice) {
-    const { flag, value, nextPart } = choice;
+    const { flag, value, nextPart, mindset } = choice;
 
     // Update the gameState with the new flag
     if (flag) {
         gameState[flag] = value;
     }
 
+    // If the choice affects a mindset, increment the score
+    if (mindset) {
+        const mindsetKey = `mindset_${mindset}`;
+        if (gameState.hasOwnProperty(mindsetKey)) {
+            gameState[mindsetKey]++;
+            console.log(`Mindset updated: ${mindsetKey} is now ${gameState[mindsetKey]}`);
+        }
+    }
+
     // Special logic for P2 commute outcomes
     if (gameState.currentPart === "P2" && flag === "commuteMethod") {
-        if (value === "walk") {
-            gameState.isLateForClass = true;
-        } else {
-            gameState.isLateForClass = false;
-        }
+        gameState.isLateForClass = (value === "walk");
     }
 
     // Advance to the next part of the story
@@ -824,6 +870,16 @@ function renderNarrativeScene(partId) {
         button.textContent = choice.text;
         button.className = "choice-button w-full p-3 bg-gray-700 rounded-lg text-left text-indigo-300 hover:bg-indigo-600 hover:text-white transform opacity-0 translate-y-2";
         button.onclick = () => handleNarrativeChoice(choice);
+
+        // --- V3 UI Logic: Stat-based choice availability ---
+        // For now, we'll make all choices available and apply the visual effect.
+        // In the future, a stat check would go here.
+        // Example: if (choice.mindset && gameState[`mindset_${choice.mindset}`] >= 5) {
+        if (true) { // Placeholder for stat check
+            button.classList.add('available-choice');
+        }
+        // } else { button.disabled = true; button.classList.add('cursor-not-allowed', 'text-gray-500'); }
+
         choicesContainer.appendChild(button);
 
         // Animate choices in
@@ -947,6 +1003,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function renderWardrobeStep(step) {
     if (step === "end") {
+        calculateInitialMindsetScores(); // Calculate mindset scores from final clothing stats
         renderNarrativeScene("P1"); // Start the narrative timeline
         return;
     }
