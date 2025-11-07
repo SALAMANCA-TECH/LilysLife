@@ -253,49 +253,78 @@ function setLoading(isLoading) {
 // --- AI API FUNCTIONS ---
 
 /**
+ * Helper function to fetch an image from a URL and convert it to a Gemini-compatible format.
+ * NOTE: This will not work if the images are on a different domain without CORS enabled.
+ * A proxy is used as a workaround for this prototype.
+ */
+async function urlToGenerativePart(url) {
+    // A proxy is used to bypass CORS issues with placehold.co in a browser environment.
+    const proxyUrl = `https://cors-anywhere.herokuapp.com/${url}`;
+    const response = await fetch(proxyUrl);
+    if (!response.ok) {
+        throw new Error(`Failed to fetch image from ${url}: ${response.statusText}`);
+    }
+    const blob = await response.blob();
+    const mimeType = blob.type;
+    const arrayBuffer = await blob.arrayBuffer();
+    // A classic way to Base64-encode an ArrayBuffer in the browser.
+    const base64Data = btoa(new Uint8Array(arrayBuffer).reduce((data, byte) => data + String.fromCharCode(byte), ''));
+    return {
+        inlineData: {
+            data: base64Data,
+            mimeType
+        }
+    };
+}
+
+/**
  * (AI TASK 1) Generates the character image by combining layers.
- * This is a placeholder for a true image-to-image API.
- * We use the nano-banana model with text prompts and image URLs.
+ * This has been refactored to use gemini-pro-vision and sends base64 image data directly.
  */
 async function generateCharacterImage() {
+    if (!apiKey) {
+        console.warn("Missing API key, skipping image generation.");
+        characterImage.src = "https://placehold.co/320x427/27272a/ffffff?text=Image+Generation+Skipped+(No+API+Key)";
+        return;
+    }
     setLoading(true);
-    // This API URL is for the 'gemini-2.5-flash-image-preview' model (nano-banana)
-    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image-preview:generateContent?key=${apiKey}`;
+    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro-vision:generateContent?key=${apiKey}`;
     
-    // Build the prompt from equipped items
-    let clothingItems = [BASE_MODEL_URL]; // Start with the base model
-    let clothingDesc = [];
+    try {
+        // --- 1. Collect Image URLs ---
+        let imageUrls = [BASE_MODEL_URL]; // Start with the base model
+        let clothingDesc = [];
 
-    for (const category in gameState.equipped) {
-        const itemId = gameState.equipped[category];
-        if (itemId) {
-            const item = clothingDatabase[category]?.[itemId];
-            if (item && item.imageUrl) {
-                // In a real implementation, we'd pass multiple images.
-                // For this API, we pass URLs in the text prompt.
-                clothingItems.push(item.imageUrl);
-                clothingDesc.push(item.name);
+        for (const category in gameState.equipped) {
+            const itemId = gameState.equipped[category];
+            if (itemId) {
+                const item = clothingDatabase[category]?.[itemId];
+                if (item && item.imageUrl) {
+                    imageUrls.push(item.imageUrl);
+                    clothingDesc.push(item.name);
+                }
             }
         }
-    }
 
-    // This prompt is based on your proof-of-concept
-    const userPrompt = `Combine the following items onto the base model: ${clothingDesc.join(', ')}.
-        Base Model: ${BASE_MODEL_URL}
-        ${clothingDesc.map((name, i) => `${name}: ${clothingItems[i+1]}`).join('\n')}
-        The final image should be one coherent character portrait with all items worn correctly, rendered in a realistic style.`;
+        // --- 2. Fetch and Prepare Image Data ---
+        // Use Promise.all to fetch all images concurrently using the helper.
+        console.log("Fetching images for generation:", imageUrls);
+        const imageParts = await Promise.all(imageUrls.map(url => urlToGenerativePart(url)));
+        console.log("Image parts prepared successfully.");
 
-    const payload = {
-        contents: [{
-            parts: [{ text: userPrompt }]
-        }],
-        generationConfig: {
-            responseModalities: ['TEXT', 'IMAGE']
-        },
-    };
+        // --- 3. Construct the Prompt and Payload ---
+        const userPrompt = `Combine the equipped clothing items onto the base character model. The first image is the base model, and the subsequent images are the clothing items to be layered on top: ${clothingDesc.join(', ')}. The final image should be one coherent character portrait with all items worn correctly, rendered in a realistic style.`;
 
-    try {
-        // Implement exponential backoff for API calls
+        const payload = {
+            contents: [{
+                parts: [
+                    { text: userPrompt },
+                    ...imageParts // Spread the array of image parts
+                ]
+            }],
+        };
+
+        // --- 4. Make the API Call (with backoff) ---
         let response;
         let retries = 0;
         const maxRetries = 3;
@@ -306,9 +335,7 @@ async function generateCharacterImage() {
                 body: JSON.stringify(payload)
             });
 
-            if (response.ok) {
-                break; // Success
-            }
+            if (response.ok) break;
 
             retries++;
             const delay = Math.pow(2, retries) * 1000;
@@ -317,6 +344,8 @@ async function generateCharacterImage() {
         }
 
         if (!response.ok) {
+            const errorBody = await response.text();
+            console.error("API response error body:", errorBody);
             throw new Error(`API call failed after ${maxRetries} retries with status ${response.status}`);
         }
 
@@ -326,11 +355,16 @@ async function generateCharacterImage() {
         if (base64Data) {
             characterImage.src = `data:image/png;base64,${base64Data}`;
         } else {
-            console.error("Image generation failed:", result);
+            console.error("Image generation failed. API Response:", result);
+            // Log the full response if the expected data isn't there.
+            if (result.candidates && result.candidates[0].finishReason !== 'STOP') {
+                console.error("Image generation stopped for reason:", result.candidates[0].finishReason);
+                console.error("Safety Ratings:", result.candidates[0].safetyRatings);
+            }
             characterImage.src = "https://placehold.co/320x427/c70000/ffffff?text=Image+Gen+Failed";
         }
     } catch (error) {
-        console.error("Error calling image API:", error);
+        console.error("Error during image generation process:", error);
         characterImage.src = "https://placehold.co/320x427/c70000/ffffff?text=Image+Gen+Error";
     } finally {
         setLoading(false);
@@ -341,9 +375,15 @@ async function generateCharacterImage() {
  * (AI TASK 3) Generates the narrative text for a scene.
  */
 async function generateNarrative(sceneId) {
+    if (!apiKey) {
+        console.warn("Missing API key, skipping narrative generation.");
+        narrativeContainer.innerHTML = `<p class="mb-4 text-gray-500">Narrative generation skipped (No API Key).</p>`;
+        return;
+    }
     setLoading(true);
     narrativeContainer.innerHTML = `<p class="mb-4 text-gray-500">Generating narrative...</p>`;
-    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+    // Note: The model was already updated. This confirms the endpoint structure for gemini-pro.
+    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`;
 
     const systemPrompt = `You are Delilah, a narrative co-author for an interactive game. Your role is to write the descriptive prose for a scene. You must not violate content policies. Focus on internal monologue, atmosphere, and identity. Keep the text to a single, engaging paragraph.`;
     
@@ -406,7 +446,7 @@ async function generateNarrative(sceneId) {
         console.error("Error calling text API:", error);
         narrativeContainer.innerHTML = `<p class="mb-4 text-red-400">Error connecting to narrative AI.</p>`;
     } finally {
-        setLoading.call(this, false);
+        setLoading(false);
     }
 }
 
