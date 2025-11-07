@@ -6,6 +6,22 @@ import configApiKey from './config.js';
 
 // --- V2.0 DATABASE DEFINITIONS ---
 
+// A constant array listing all 21 attributes.
+const ALL_STATS = [
+    // Mindset
+    'cautious', 'curious', 'bold',
+    // Social
+    'charming', 'intimidating', 'alluring',
+    'honorable', 'dishonorable',
+    'secure', 'insecure',
+    'reserved', 'expressive',
+    // Skills
+    'logical', 'creative', 'perceptive',
+    'agile', 'clumsy',
+    'enduring', 'feeble',
+    'eloquent', 'stuttering'
+];
+
 // --- Firebase & API Globals ---
 // NOTE: These variables are 'undefined' in a local environment.
 // You will need to replace them with your actual Firebase config and API key for local testing.
@@ -60,7 +76,7 @@ const clothingDatabase = {
     "outfit_top": {
         "sweater": {
             name: "Baggy Sweater",
-            stats: { cautious: 2, bold: -2, curious: 0 },
+            stats: { reserved: 2, secure: 1, cautious: 2, creative: -1, feeble: 1 },
             imageUrl: "https://preview.redd.it/new-clothes-im-going-to-stop-soon-and-buckle-down-on-the-v0-crg60v296tzf1.jpg?width=320&crop=smart&auto=webp&s=b716074f2fd74a105c7da6db61385d3c13021033"
         },
         "top": {
@@ -72,7 +88,7 @@ const clothingDatabase = {
     "outfit_bottom": {
         "jeans": {
             name: "Tight Blue Jeans",
-            stats: { cautious: 1, bold: 0, curious: 0 },
+            stats: { alluring: 2, expressive: -1, bold: 1, insecure: 1, clumsy: 1 },
             imageUrl: "https://preview.redd.it/new-clothes-im-going-to-stop-soon-and-buckle-down-on-the-v0-y84gfvs76tzf1.jpg?width=320&crop=smart&auto=webp&s=7e53684b4209fc4abe92b083b79961778fe3548a"
         },
         "trousers": {
@@ -91,7 +107,7 @@ const clothingDatabase = {
     "shoes": { // Added shoes as a category
         "chucks": {
             name: "White Converse",
-            stats: { cautious: 0, bold: 0, curious: 0 },
+            stats: { enduring: 2, honorable: 1, creative: 1, eloquent: -1, feeble: -1 },
             imageUrl: "https://preview.redd.it/new-clothes-im-going-to-stop-soon-and-buckle-down-on-the-v0-ay7utzd86tzf1.jpg?width=320&crop=smart&auto=webp&s=6499de54015a94400f9ddf58b7f20b274baa4c71"
         },
         "heels": {
@@ -177,9 +193,15 @@ const storyData = {
  */
 let gameState = {
     stats: {
-        cautious: 0,
-        curious: 0,
-        bold: 0
+        cautious: 0, curious: 0, bold: 0,
+        charming: 0, intimidating: 0, alluring: 0,
+        honorable: 0, dishonorable: 0,
+        secure: 0, insecure: 0,
+        reserved: 0, expressive: 0,
+        logical: 0, creative: 0, perceptive: 0,
+        agile: 0, clumsy: 0,
+        enduring: 0, feeble: 0,
+        eloquent: 0, stuttering: 0
     },
     equipped: {
         bra: null,
@@ -195,7 +217,7 @@ let gameState = {
 };
 
 // --- DOM Element References ---
-let narrativeContainer, choicesContainer, meterBarCautious, meterBarCurious, meterBarBold, characterImage, sceneImage, loadingOverlay, saveButton, loadButton, beginButton, continueButton, wardrobeButton;
+let narrativeContainer, choicesContainer, characterImage, sceneImage, loadingOverlay, saveButton, loadButton, beginButton, continueButton, wardrobeButton;
 
 // Set a maximum value for the meters to calculate percentages
 const MAX_STAT_VALUE = 10;
@@ -228,20 +250,22 @@ const wardrobeData = {
  * Recalculates the player's stats based on equipped items.
  */
 function recalculateStats() {
-    // Reset stats to 0
-    let newStats = { cautious: 0, curious: 0, bold: 0 };
+    // Create a new stats object initialized to zero
+    let newStats = {};
+    ALL_STATS.forEach(stat => newStats[stat] = 0);
 
     // Loop through every slot in 'equipped'
     for (const category in gameState.equipped) {
         const itemId = gameState.equipped[category];
         if (itemId) {
-            // Find the item in the database
             const item = clothingDatabase[category]?.[itemId];
             if (item && item.stats) {
                 // Add item's stats to the total
-                newStats.cautious += item.stats.cautious;
-                newStats.curious += item.stats.curious;
-                newStats.bold += item.stats.bold;
+                for (const stat in item.stats) {
+                    if (newStats.hasOwnProperty(stat)) {
+                        newStats[stat] += item.stats[stat];
+                    }
+                }
             }
         }
     }
@@ -254,17 +278,22 @@ function recalculateStats() {
  * Updates the UI meters based on the current gameState.
  */
 function updateMeters() {
-    if (!meterBarCautious || !meterBarCurious || !meterBarBold) return;
+    const meterBarCautious = document.getElementById('meter-bar-cautious');
+    const meterBarCurious = document.getElementById('meter-bar-curious');
+    const meterBarBold = document.getElementById('meter-bar-bold');
 
-    // Calculate percentage, ensuring it's between 0 and 100
-    const cautiousPercent = Math.max(0, Math.min(100, (gameState.stats.cautious / MAX_STAT_VALUE) * 100));
-    const curiousPercent = Math.max(0, Math.min(100, (gameState.stats.curious / MAX_STAT_VALUE) * 100));
-    const boldPercent = Math.max(0, Math.min(100, (gameState.stats.bold / MAX_STAT_VALUE) * 100));
-
-    // Update the style
-    meterBarCautious.style.width = `${cautiousPercent}%`;
-    meterBarCurious.style.width = `${curiousPercent}%`;
-    meterBarBold.style.width = `${boldPercent}%`;
+    if (meterBarCautious) {
+        const cautiousPercent = Math.max(0, Math.min(100, (gameState.stats.cautious / MAX_STAT_VALUE) * 100));
+        meterBarCautious.style.width = `${cautiousPercent}%`;
+    }
+    if (meterBarCurious) {
+        const curiousPercent = Math.max(0, Math.min(100, (gameState.stats.curious / MAX_STAT_VALUE) * 100));
+        meterBarCurious.style.width = `${curiousPercent}%`;
+    }
+    if (meterBarBold) {
+        const boldPercent = Math.max(0, Math.min(100, (gameState.stats.bold / MAX_STAT_VALUE) * 100));
+        meterBarBold.style.width = `${boldPercent}%`;
+    }
 }
 
 /**
@@ -701,9 +730,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Get all DOM element references
     narrativeContainer = document.getElementById('narrative-container');
     choicesContainer = document.getElementById('choices-container');
-    meterBarCautious = document.getElementById('meter-bar-cautious');
-    meterBarCurious = document.getElementById('meter-bar-curious');
-    meterBarBold = document.getElementById('meter-bar-bold');
     characterImage = document.getElementById('character-image');
     sceneImage = document.getElementById('scene-image');
     loadingOverlay = document.getElementById('loading-overlay');
@@ -743,7 +769,9 @@ document.addEventListener('DOMContentLoaded', () => {
         generateNarrative(gameState.currentScene);
     };
     wardrobeButton.onclick = () => {
-        gameState.stats = { cautious: 0, curious: 0, bold: 0 };
+        let newStats = {};
+        ALL_STATS.forEach(stat => newStats[stat] = 0);
+        gameState.stats = newStats;
         updateMeters();
         renderWardrobeStep("top");
     };
@@ -780,6 +808,8 @@ function renderWardrobeStep(step) {
                 if (item && item.imageUrl) {
                     characterImage.src = item.imageUrl;
                 }
+                recalculateStats();
+                updateMeters();
                 renderWardrobeStep(choice.nextStep);
             };
         } else {
