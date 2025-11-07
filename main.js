@@ -2,6 +2,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 import { getFirestore, doc, setDoc, getDoc, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import configApiKey from './config.js';
 
 // --- V2.0 DATABASE DEFINITIONS ---
 
@@ -9,7 +10,7 @@ import { getFirestore, doc, setDoc, getDoc, setLogLevel } from "https://www.gsta
 // NOTE: These variables are 'undefined' in a local environment.
 // You will need to replace them with your actual Firebase config and API key for local testing.
 const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-const apiKey = ""; // <-- PASTE YOUR GEMINI API KEY HERE FOR LOCAL TESTING
+const apiKey = configApiKey || "";
 const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}'); // <-- PASTE YOUR FIREBASE CONFIG OBJECT HERE
 let db, auth, userId;
 
@@ -288,7 +289,8 @@ async function generateCharacterImage() {
         return;
     }
     setLoading(true);
-    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro-vision:generateContent?key=${apiKey}`;
+    const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+    const apiUrl = `${proxyUrl}https://generativelanguage.googleapis.com/v1beta/models/gemini-pro-vision:generateContent?key=${apiKey}`;
     
     try {
         // --- 1. Collect Image URLs ---
@@ -383,7 +385,8 @@ async function generateNarrative(sceneId) {
     setLoading(true);
     narrativeContainer.innerHTML = `<p class="mb-4 text-gray-500">Generating narrative...</p>`;
     // Note: The model was already updated. This confirms the endpoint structure for gemini-pro.
-    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`;
+    const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+    const apiUrl = `${proxyUrl}https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`;
 
     const systemPrompt = `You are Delilah, a narrative co-author for an interactive game. Your role is to write the descriptive prose for a scene. You must not violate content policies. Focus on internal monologue, atmosphere, and identity. Keep the text to a single, engaging paragraph.`;
     
