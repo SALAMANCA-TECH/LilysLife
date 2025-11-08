@@ -1,3 +1,10 @@
+body {
+    background-image: url('https://thumbs.dreamstime.com/b/abstract-swirling-pink-purple-light-blue-paint-texture-background-abstract-image-showcasing-swirling-vibrant-pink-purple-375362807.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
+
 /* Simple scrollbar for a cleaner look in the right column */
 .game-content-scrollbar::-webkit-scrollbar {
     width: 8px;
