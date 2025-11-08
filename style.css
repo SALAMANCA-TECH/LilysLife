@@ -3,6 +3,8 @@ body {
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
+    font-family: 'Hachi Maru Pop', cursive;
+    text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #ff00de, 0 0 20px #ff00de, 0 0 25px #ff00de, 0 0 30px #ff00de, 0 0 35px #ff00de;
 }
 
 /* Simple scrollbar for a cleaner look in the right column */
@@ -42,4 +44,58 @@ body {
     border: 4px dashed #FFD1DC; /* A soft, light pink */
     padding: 4px;
     background-color: #1f2937; /* gray-800, to frame the image */
+}
+
+.candy-button {
+    background: linear-gradient(145deg, #ff85a2, #ffb3c1);
+    border: 2px solid #ff70a6;
+    border-radius: 12px;
+    color: white;
+    font-weight: bold;
+    padding: 10px 20px;
+    position: relative;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 4px #d46a8a, 0 6px 10px rgba(0,0,0,0.3);
+}
+
+.candy-button:hover {
+    background: linear-gradient(145deg, #ff99b3, #ffc2cf);
+    box-shadow: 0 2px #d46a8a, 0 4px 8px rgba(0,0,0,0.3);
+    transform: translateY(2px);
+}
+
+.candy-button:active {
+    box-shadow: 0 0 #d46a8a, 0 2px 4px rgba(0,0,0,0.3);
+    transform: translateY(4px);
+}
+
+.candy-button::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('https://www.transparenttextures.com/patterns/stardust.png');
+    opacity: 0.1;
+    border-radius: 12px;
+}
+
+.candy-button.disabled {
+    background: linear-gradient(145deg, #a9a9a9, #d3d3d3);
+    border-color: #999;
+    box-shadow: 0 4px #888;
+    cursor: not-allowed;
+}
+
+.candy-button.disabled:hover {
+    background: linear-gradient(145deg, #a9a9a9, #d3d3d3);
+    box-shadow: 0 4px #888;
+    transform: translateY(0);
+}
+
+.candy-button.disabled:active {
+    box-shadow: 0 4px #888;
+    transform: translateY(0);
 }
