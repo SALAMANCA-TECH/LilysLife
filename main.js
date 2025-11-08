@@ -1144,7 +1144,7 @@ function renderNarrativeScene(partId) {
         // Optionally, add a button to restart the narrative
         const restartButton = document.createElement('button');
         restartButton.textContent = "Start Over";
-        restartButton.className = "choice-button w-full p-3 bg-indigo-500 rounded-lg text-left text-white hover:bg-indigo-600";
+        restartButton.className = "candy-button";
         restartButton.onclick = () => {
             // This could reset the narrative flags and go back to P1 or the wardrobe
             location.reload(); // Simple reload for now
@@ -1194,11 +1194,11 @@ function renderNarrativeScene(partId) {
         button.textContent = choice.text;
 
         if (choice.nextPart) {
-            button.className = "choice-button w-full p-3 bg-gray-700 rounded-lg text-left text-indigo-300 hover:bg-indigo-600 hover:text-white transform opacity-0 translate-y-2";
+            button.className = "candy-button";
             button.onclick = () => handleNarrativeChoice(choice);
             button.classList.add('available-choice');
         } else {
-            button.className = "choice-button w-full p-3 bg-gray-800 rounded-lg text-left text-gray-500 hover:bg-gray-700 transform opacity-0 translate-y-2";
+            button.className = "candy-button disabled";
             button.onclick = () => showComingSoonPopup();
         }
 
@@ -1366,7 +1366,7 @@ function renderWardrobeStep(step) {
         const button = document.createElement('button');
         button.textContent = choice.text;
         if (choice.functional) {
-            button.className = "choice-button w-full p-3 bg-indigo-500 rounded-lg text-left text-white hover:bg-indigo-600";
+            button.className = "candy-button";
             button.onclick = () => {
                 gameState.equipped[choice.category] = choice.key;
                 const item = clothingDatabase[choice.category]?.[choice.key];
@@ -1378,7 +1378,7 @@ function renderWardrobeStep(step) {
                 renderWardrobeStep(choice.nextStep);
             };
         } else {
-            button.className = "choice-button w-full p-3 bg-gray-700 rounded-lg text-left text-gray-400 cursor-not-allowed";
+            button.className = "candy-button disabled";
             button.disabled = true;
         }
         choicesContainer.appendChild(button);
