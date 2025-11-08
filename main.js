@@ -48,7 +48,7 @@ const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __f
 let db, auth, userId;
 
 // Base image for the character model
-const BASE_MODEL_URL = "https://placehold.co/320x427/27272a/7f7f7f?text=Base+Model"; // Placeholder for 'added-04.jpg'
+const BASE_MODEL_URL = "https://preview.redd.it/another-set-of-baselines-v0-bjbkswhc3tzf1.jpg?width=320&crop=smart&auto=webp&s=c0141deba9fc96fc62b61ecec31225fa3ef192e8"; // Placeholder for 'added-04.jpg'
 
 /**
  * The "Armory" (Clothing Database)
