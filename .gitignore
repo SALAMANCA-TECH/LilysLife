@@ -1,1 +1,2 @@
 # Ignore the config file containing the API key
+node_modules/
