@@ -209,6 +209,12 @@ const storyData = {
 
 const DEFAULT_SCENE_IMAGE_URL = "https://preview.redd.it/what-do-yall-think-new-logo-time-v0-8zmlko0klrzf1.jpeg?width=640&crop=smart&auto=webp&s=b37e388430fce2ecd91ae19c637dc7df9930ca58";
 
+const sceneImageDatabase = {
+    // This maps abstract asset names to actual image URLs.
+    // Most will use the default for now as per instructions.
+    "ASSET_P2_OFFICE_DOOR": "https://preview.redd.it/what-do-yall-think-new-logo-time-v0-8zmlko0klrzf1.jpeg?width=640&crop=smart&auto=webp&s=b37e388430fce2ecd91ae19c637dc7df9930ca58",
+};
+
 const narrativeTimeline = {
     "P1": {
         narrative: "The morning light filters through the blinds, painting stripes across the room. It's a new day, another chance to define who you are. The reflection in the mirror is still a stranger, a puzzle you're slowly piecing together. The first choice of the day is always the hardest: how to face the world waiting outside.",
@@ -223,124 +229,273 @@ const narrativeTimeline = {
         narrative: "Time to get to the university. The commute is a battlefield, a series of choices that will set the tone for the entire day. Each option has its own risks, its own rewards.",
         imageUrl: "ASSET_P1_COMMUTE_MAP",
         choices: [
-            { text: "[Cautious] Walk. It's slow and agonizing, but it avoids people.", flag: "commuteMethod", value: "walk", nextPart: "P1-2" },
-            { text: "[Curious] Take the bus. It's a petri dish of social interaction.", flag: "commuteMethod", value: "bus", nextPart: "P1-2" },
-            { text: "[Bold] Ride your bike. It's fast, risky, and gets the adrenaline pumping.", flag: "commuteMethod", value: "bike", nextPart: "P1-2" }
-        ]
-    },
-        narrative: "The choice was made: the path of least resistance was slow, quiet isolation. You pulled the thick, charcoal comfy sweater low, the soft fabric a desperate attempt to shield the jarring exposure of the black mini skirt from the world. The journey, usually a brisk fifteen minutes, stretched into forty-five minutes of agonizing, oppressive self-consciousness. Every engine roar, every car that idled at the curb, every glance from a pedestrian felt like a deliberate, hostile inspection of your unfamiliar form. You kept your gaze fixed on the pavement, counting cracks, feeling the heavy, unfamiliar muscle memory of your body resist the urge to run. The internal monologue was a frantic, low whisper: Don’t look. Don’t draw attention. Just endure this punishment. The world felt too loud, too bright, and impossibly heavy. The emotional price of this deliberate retreat was a mandated delay.",
-        imageUrl: "ASSET_P1_COMMUTE_WALK",
-    "P3": {
-        narrative: "[P3: The Work Drop] You pass by Alex's office. They're a minor rival, a social obstacle.",
-        imageUrl: "https://placehold.co/600x400/3a3a3a/ffffff?text=Alex's+Office",
-        emotion: "curious",
-        choices: [
-            { text: "Continue", nextPart: "P2-1" }
+            { text: "[Cautious] Walk. It's slow and agonizing, but it avoids people.", flag: "commuteMethod", value: "walk", nextPart: "P2-1" },
+            { text: "[Curious] Take the bus. It's a petri dish of social interaction.", flag: "commuteMethod", value: "bus", nextPart: "P2-1" },
+            { text: "[Bold] Ride your bike. It's fast, risky, and gets the adrenaline pumping.", flag: "commuteMethod", value: "bike", nextPart: "P2-1" }
         ]
     },
     "P2-1": {
-        narrative: "You arrived at the old office building, your breath ragged and your palms damp with anxiety. The internal thought was a high-pitched, panicked mantra: Do not engage. They will see the difference. You were supposed to check in with your manager, Alex, but the thought of facing a known quantity with this unknown body was paralyzing. You could imagine his familiar, cold irritation—a feeling so strong you practically felt it through the heavy wood of the office door. The air around the door felt thick, charged with the judgment you knew would come if you stepped inside. Every second spent there felt like a risk, demanding a hasty, anonymous retreat before the true confrontation could begin.",
+        narrative: "You arrive at the office manager's door, feeling anxious about seeing Alex. You must make a choice about engagement.",
         imageUrl: "ASSET_P2_OFFICE_DOOR",
         choices: [
-            { text: "[Cautious] Slip the folder under the door and leave a quick text explaining I had to rush to class.", mindset: "cautious", flag: "alexRelationship", value: "hostile", nextPart: "P2-2" },
-            { text: "[Curious] Watch Alex from a distance, observing his behavior before deciding to interact.", mindset: "curious", nextPart: "P2-2" },
-            { text: "[Bold] Walk in, make direct eye contact, and initiate a conversation.", mindset: "bold", nextPart: "P2-2" }
+            { text: "[Cautious] Slip the folder under the door and send a quick text.", mindset: "cautious", consequences: { alexRelationship: "hostile" }, nextPart: "P2-1A" },
+            { text: "[Curious] Observe Alex from a distance to gather data.", mindset: "curious", consequences: { alexRelationship: "confused" }, nextPart: "P2-1B" },
+            { text: "[Bold] Walk in, make eye contact, and challenge him about the deadline.", mindset: "bold", consequences: { alexRelationship: "intrigued" }, nextPart: "P2-1C" }
         ]
+    },
+    "P2-1A": {
+        narrative: "The safest choice is evasion. You leave the folder anonymously, accepting the guaranteed hostility.",
+        imageUrl: "ASSET_P2_OFFICE_DOOR",
+        choices: [ { text: "Continue", nextPart: "P2-2" } ]
+    },
+    "P2-1B": {
+        narrative: "You successfully gather data on Alex’s confused reaction to your formal, cold action. Safety achieved through distance.",
+        imageUrl: "ASSET_P2_OFFICE_DOOR",
+        choices: [ { text: "Continue", nextPart: "P2-2" } ]
+    },
+    "P2-1C": {
+        narrative: "You assert control immediately, challenging Alex about the work. He is surprised and intrigued by your new confidence.",
+        imageUrl: "ASSET_P2_OFFICE_DOOR",
+        choices: [ { text: "Continue", nextPart: "P2-2" } ]
     },
     "P2-2": {
-        narrative: "You rushed across campus, carrying the new weight of social failure from the office. When you finally reached the Business School, you fumbled with the heavy lecture hall door. The brightly lit, sterile hall was entirely silent as you stepped inside. Dr. Thorne, the professor, paused his dense lecture on supply chains mid-sentence. The silence was immediate, cutting, and absolute. Seventy pairs of eyes, all focused intently on you, amplified the feeling of raw, unwelcome exposure. You could feel the protective shape of your sweater doing nothing to deflect the attention. The air felt heavy, waiting for the inevitable reprimand.",
-        imageUrl: "ASSET_P2_LECTURE_HALL_ENTRANCE",
-        choices: [
-            { text: "[Continue] Face the professor.", nextPart: "P2-3" }
-        ]
+        narrative: "Dr. Thorne publicly reprimands you for being late. The entire class is watching you.",
+        imageUrl: "ASSET_P2_LECTURE_HALL",
+        choices: [ { text: "Take your seat.", nextPart: "P2-3" } ]
     },
     "P2-3": {
-        narrative: "\"Lily,\" Dr. Thorne stated flatly, his voice amplified and booming through the mic. \"You're late. Again.\" He paused, letting the full weight of the class's collective attention settle on your shoulders. \"Your grades are slipping, your participation is non-existent, and frankly, I expect better from someone in your position.\" You finally found your seat, sinking low, desperate to melt into the uncomfortable plastic. The weight of his words and the collective gaze amplified the feeling of profound social incompetence. You knew you should participate to mitigate the damage, but the sound of your own voice in this new register, the risk of saying something wrong, was utterly paralyzing.",
+        narrative: "You must choose whether to engage academically or continue to hide.",
         imageUrl: "ASSET_P2_LECTURE_HALL",
         choices: [
-            { text: "[Cautious] Keep my head down, pretend to be taking notes, and avoid all eye contact.", mindset: "cautious", nextPart: "P3-1" },
-            { text: "[Curious] Write a complex question on a note card and pass it to the professor without speaking.", mindset: "curious", nextPart: "P3-1" },
-            { text: "[Bold] Raise my hand immediately and aggressively challenge the professor on a minor point.", mindset: "bold", nextPart: "P3-1" }
+            { text: "[Cautious] Keep my head down, avoid all eye contact.", mindset: "cautious", nextPart: "P2-3A" },
+            { text: "[Curious] Write a complex question on a note card and pass it up.", mindset: "curious", nextPart: "P2-3B" },
+            { text: "[Bold] Aggressively challenge the professor on a minor point.", mindset: "bold", nextPart: "P2-3C" }
         ]
+    },
+    "P2-3A": {
+        narrative: "You surrender to silence, accepting the shame and making yourself invisible for the duration of the class.",
+        imageUrl: "ASSET_P2_OFFICE_DOOR",
+        choices: [ { text: "Continue", nextPart: "P3-1" } ]
+    },
+    "P2-3B": {
+        narrative: "You successfully assert intellectual competence without speaking, minimizing social risk while gaining credit.",
+        imageUrl: "ASSET_P2_OFFICE_DOOR",
+        choices: [ { text: "Continue", nextPart: "P3-1" } ]
+    },
+    "P2-3C": {
+        narrative: "You engage in a reckless but necessary verbal confrontation, feeling a sharp, cleansing shock of defiance.",
+        imageUrl: "ASSET_P2_OFFICE_DOOR",
+        choices: [ { text: "Continue", nextPart: "P3-1" } ]
     },
     "P3-1": {
-        narrative: "The wrestling gym was a raw, physical assault on the senses. The air was thick and humid, filled with the sharp scent of rubber matting, disinfectant, and overwhelming sweat. The soundscape was dominated by grunts, sharp breaths, and the loud rhythmic slap of bodies hitting the floor. The sight of the large, muscular forms moving with violent, controlled purpose was terrifying—you felt clumsy and infinitely small. You stood near the entrance, frozen, utterly out of place, watching the choreography of aggression unfold.",
-        imageUrl: "ASSET_P3_WRESTLING_MAT_OVERVIEW",
-        choices: [
-            { text: "[Continue] Proceed to the mat area.", nextPart: "P3-2" }
-        ]
-    },
-    "P3-2": {
-        narrative: "Coach spotted you. His face, weathered and stern, hardened into an expression of impatience. His instructions were a sharp, demanding bark: \"LILY! Get changed! You're burning daylight!\" He didn't ask; he commanded. He pointed an aggressive finger toward the doorway leading to the hostile environment of the men's locker room. Every shred of anxiety you had managed to contain since class instantly re-emerged. You had to obey, forcing you to confront the intimate setting you most feared.",
+        narrative: "Coach shouts. You must enter the hostile environment of the men's locker room.",
         imageUrl: "ASSET_P3_COACH",
-        choices: [
-            { text: "[Continue] Enter the locker room.", nextPart: "P3-3" }
-        ]
+        choices: [ { text: "Enter the locker room.", nextPart: "P3-3" } ]
     },
     "P3-3": {
-        narrative: "Inside, the air was heavy, hot, and thick with steam from the showers. The casual nudity, the easy confidence, and the loud, relaxed chatter of the teammates was a shocking, unbearable contrast to your internal panic. You located your locker. The singlet, thin and brutally exposing, felt like a joke. Your only thought was a single, desperate word: escape. You needed to get out of the clothes you were in and into the uniform with minimal social notice.",
+        narrative: "You must change into the singlet amidst the casual exposure of your teammates.",
         imageUrl: "ASSET_P3_LOCKER_ROOM",
         choices: [
-            { text: "[Cautious] Face the back of the locker, change quickly, shaking slightly, body hidden from view.", mindset: "cautious", nextPart: "P3-4" },
-            { text: "[Curious] Change quickly, but clinically scan the room, gathering data on the others.", mindset: "curious", nextPart: "P3-4" },
-            { text: "[Bold] Change openly, meeting teammates' eyes to assert presence.", mindset: "bold", nextPart: "P3-4" }
+            { text: "[Cautious] Face the locker, change quickly, body hidden.", mindset: "cautious", nextPart: "P3-3A" },
+            { text: "[Curious] Change quickly, but clinically scan the room.", mindset: "curious", nextPart: "P3-3B" },
+            { text: "[Bold] Change openly, meeting teammates' eyes.", mindset: "bold", nextPart: "P3-3C" }
         ]
+    },
+    "P3-3A": {
+        narrative: "You successfully hide the body, accepting the shame of evasion.",
+        imageUrl: "ASSET_P2_OFFICE_DOOR",
+        choices: [ { text: "Continue", nextPart: "P3-4" } ]
+    },
+    "P3-3B": {
+        narrative: "You collect crucial data on the male social environment while changing.",
+        imageUrl: "ASSET_P2_OFFICE_DOOR",
+        choices: [ { text: "Continue", nextPart: "P3-4" } ]
+    },
+    "P3-3C": {
+        narrative: "You assert presence immediately, turning a moment of vulnerability into a moment of defiance.",
+        imageUrl: "ASSET_P2_OFFICE_DOOR",
+        choices: [ { text: "Continue", nextPart: "P3-4" } ]
     },
     "P3-4": {
-        narrative: "You rushed onto the mat, heart pounding, determined to endure the physical drill. The singlet felt like a flag of surrender. You were immediately clumsy, weak, and uncoordinated in the aggressive stance. Coach shouted a drill instruction, and the physical punishment began. The first few partners were a blur of quick, efficient takedowns, leaving your body aching and your mind spiraling in shame over your lack of physical control.",
-        imageUrl: "ASSET_P3_GRAPPLE_START",
-        choices: [
-            { text: "[Continue] Prepare for the next partner.", nextPart: "P3-5" }
-        ]
-    },
-    "P3-5": {
-        narrative: "Then came Ben. He was focused, strong, and when he executed the cradle hold, it was sudden, pinning you with intimate, overwhelming pressure. His weight pressed you into the mat; his thigh was a solid barrier. Then came the intrusion: his hand came too high, his thumb brushing your inner thigh. The \"flutter\" was confusing, terrifying, and deeply intrusive—a feeling you couldn't process, only reject. You couldn't process the sudden chemical spike; you could only process the searing shame of the physical exposure and the violation of your boundaries.",
+        narrative: "Ben executes the cradle hold. His hand placement is intrusive, causing the sudden, confusing \"flutter.\"",
         imageUrl: "ASSET_P3_GRAPPLE_CLOSE",
         choices: [
-            { text: "[Cautious] Shyly try to pull his hand away, resisting the intrusive pressure.", mindset: "cautious", flag: "practiceControl", value: "humiliated", nextPart: "P4-1" },
-            { text: "[Curious] Freeze, analyzing the chemical and hormonal \"flutter.\"", mindset: "curious", flag: "practiceControl", value: "analytical", nextPart: "P4-1" },
-            { text: "[Bold] Lean into the touch, \"allowing\" it to assert control over the sensation.", mindset: "bold", flag: "practiceControl", value: "empowered", nextPart: "P4-1" }
+            { text: "[Cautious] Shyly try to pull his hand away, resisting the intrusive pressure.", mindset: "cautious", consequences: { practiceControl: "humiliated" }, nextPart: "P3-4A" },
+            { text: "[Curious] Freeze, analyzing the chemical and hormonal \"flutter.\"", mindset: "curious", consequences: { practiceControl: "analyzed" }, nextPart: "P3-4B" },
+            { text: "[Bold] Lean into the touch, \"allowing\" it to assert control.", mindset: "bold", consequences: { practiceControl: "dominant" }, nextPart: "P3-4C" }
         ]
     },
+    "P3-4A": {
+        narrative: "Ben misinterprets the resistance and pins you in an embarrassing, exposed way. The shame is absolute.",
+        imageUrl: "ASSET_P2_OFFICE_DOOR",
+        choices: [ { text: "Continue", nextPart: "P4-1" } ]
+    },
+    "P3-4B": {
+        narrative: "You turn the physical contact into a clinical experiment, gaining data but feeling off-center.",
+        imageUrl: "ASSET_P2_OFFICE_DOOR",
+        choices: [ { text: "Continue", nextPart: "P4-1" } ]
+    },
+    "P3-4C": {
+        narrative: "You successfully assert control over the intimate moment; Ben is shocked and falters. You feel powerful.",
+        imageUrl: "ASSET_P2_OFFICE_DOOR",
+        choices: [ { text: "Continue", nextPart: "P4-1" } ]
+    },
     "P4-1": {
-        narrative: "The shame of the wrestling mat clung to you like stale sweat, heavy and inescapable. You met Mitch outside, near his car. He didn't need to ask what was wrong. He saw your drawn face and the profound emotional agony reflected in your eyes. \"You look like you need two things, not one,\" he murmured, his voice gentle and low, a sudden anchor in the storm. \"You need a drink... and clothes.\" His simple offer of non-judgmental comfort cracked the armor of your self-repression. You needed privacy, refuge, and above all, to hide from any further confrontation.",
+        narrative: "Mitch offers comfort and a choice: \"You need a drink... and clothes.\"",
         imageUrl: "ASSET_P4_MITCH_CAR",
         choices: [
-            { text: "[Cautious] Rummage the Closet: Seek privacy and safety in familiar surroundings.", flag: "gettingReadyChoice", value: "closet", nextPart: "P4-2" },
-            { text: "[Bold] Go Shopping: Force public exposure and new confrontations.", flag: "gettingReadyChoice", value: "shopping", nextPart: "P4-2" }
+            { text: "[Cautious] Rummage the Closet: Seek privacy and safety in familiar surroundings.", nextPart: "P4-2" },
+            { text: "[Bold] Go Shopping: Force public exposure and new confrontations.", nextPart: "P4-3" }
         ]
     },
     "P4-2": {
-        narrative: "Inside the apartment, you retreated instantly to the dark, small confines of the closet. The clothes were overwhelming—too many colors, too many fabrics, too many reminders of the person you were forced to inhabit. The thought of putting on anything bold or new felt like forcing a painful lie. Mitch stayed in the living room, quiet and understanding, sensing your desperate need for isolation. You prioritized blending in over confronting your new reality, needing camouflage above all else.",
+        narrative: "You retreat to the private closet. Your choice here sets the final bond with Mitch.",
         imageUrl: "ASSET_P4_CLOSET",
         choices: [
-            { text: "[Cautious] Choose oversized, loose-fitting clothes to hide the body entirely.", mindset: "cautious", nextPart: "P4-3" },
-            { text: "[Curious] Select something slightly provocative but entirely analytical—a test case.", mindset: "curious", nextPart: "P4-3" },
-            { text: "[Bold] Choose a dramatically revealing, defiant outfit.", mindset: "bold", nextPart: "P4-3" }
+            { text: "[Cautious] Choose oversized, loose-fitting clothes (Hiding).", mindset: "cautious", consequences: { mitchBond: "friend" }, nextPart: "P4-2A" },
+            { text: "[Curious] Select something analytical (Test Case).", mindset: "curious", consequences: { mitchBond: "blurry" }, nextPart: "P4-2B" },
+            { text: "[Bold] Choose a dramatically revealing outfit (Defiance).", mindset: "bold", consequences: { mitchBond: "intimate" }, nextPart: "P4-2C" }
         ]
+    },
+    "P4-2A": {
+        narrative: "You emerge in protective camouflage. Mitch offers only platonic support.",
+        imageUrl: "ASSET_P4_COAT_FINAL",
+        choices: [ { text: "Continue", nextPart: "P5-1A" } ]
+    },
+    "P4-2B": {
+        narrative: "You choose an analytical outfit; the resulting interaction is tense and unresolved with Mitch.",
+        imageUrl: "ASSET_P2_OFFICE_DOOR",
+        choices: [ { text: "Continue", nextPart: "P5-1B" } ]
+    },
+    "P4-2C": {
+        narrative: "You choose defiance privately, leading to an immediate, intimate dynamic with Mitch.",
+        imageUrl: "ASSET_P2_OFFICE_DOOR",
+        choices: [ { text: "Continue", nextPart: "P5-1C" } ]
     },
     "P4-3": {
-        narrative: "You emerged in a large, shapeless, charcoal-gray dress that was utterly forgettable and entirely protective. It was the color of shadows, a refusal to be seen. Mitch smiled kindly and offered only platonic support, recognizing your need for safety above style. \"You look great, Lily. Ready to go?\" The tension was entirely absent, replaced by quiet, loyal camaraderie. Your connection was now defined by comfort, refuge, and non-confrontation—a safe harbor from the turbulent day.",
-        imageUrl: "ASSET_P4_COAT_FINAL",
+        narrative: "You choose public exposure. Your choice here sets the final bond with Mitch.",
+        imageUrl: "ASSET_P2_OFFICE_DOOR",
         choices: [
-            { text: "[Continue] Head to the bar.", flag: "mitchBond", value: "friend", nextPart: "P5-1" }
+            { text: "[Cautious] Stays isolated in the fitting room (Hiding).", mindset: "cautious", consequences: { mitchBond: "friend" }, nextPart: "P4-3A" },
+            { text: "[Curious] Needs help with a zipper (Tense Proximity).", mindset: "curious", consequences: { mitchBond: "blurry" }, nextPart: "P4-3B" },
+            { text: "[Bold] Uses the moment to openly flirt with Mitch (Assertion).", mindset: "bold", consequences: { mitchBond: "intimate" }, nextPart: "P4-3C" }
         ]
     },
-    "P5-1": {
-        narrative: "The bar was loud, dark, and crowded, but nestled in a quiet booth with Mitch, it felt safe. You had achieved a fragile shield. You and Mitch arrived as platonic friends, your connection a solid barrier against the chaos of the night. Mitch talked easily about his week, his presence a comforting anchor, drawing the attention away from you. You focused on the steady, familiar rhythm of his voice, letting it wash over you, desperately trying to ignore the lingering, shaming sensation of the humiliating pin. The evening was becoming an exhausting act of holding your breath.",
+    "P4-3A": {
+        narrative: "You avoid confrontation even in public, buying something safe. The bond remains platonic.",
+        imageUrl: "ASSET_P2_OFFICE_DOOR",
+        choices: [ { text: "Continue", nextPart: "P5-1A" } ]
+    },
+    "P4-3B": {
+        narrative: "You initiate a tense, awkward, physical interaction, leaving the bond undefined.",
+        imageUrl: "ASSET_P2_OFFICE_DOOR",
+        choices: [ { text: "Continue", nextPart: "P5-1B" } ]
+    },
+    "P4-3C": {
+        narrative: "You openly assert your new body, turning the moment into an immediate, intimate connection with Mitch.",
+        imageUrl: "ASSET_P2_OFFICE_DOOR",
+        choices: [ { text: "Continue", nextPart: "P5-1C" } ]
+    },
+    "P5-1A": {
+        narrative: "You are in a safe haven. The focus is on refuge and avoiding confrontation.",
         imageUrl: "ASSET_P5_BAR_SAFE",
         choices: [
-            { text: "[Cautious] Hunch low, seek shelter behind Mitch, and quietly ask to leave.", mindset: "cautious", flag: "finalBond", value: "sanctuary", nextPart: "P5-2" },
-            { text: "[Curious] Stay late, observing the other patrons, analyzing their social dynamics.", mindset: "curious", flag: "finalBond", value: "observation", nextPart: "P5-2" },
-            { text: "[Bold] Initiate a conversation with a nearby stranger, pushing a social boundary.", mindset: "bold", flag: "finalBond", value: "confrontation", nextPart: "P5-2" }
+            { text: "[Cautious] Hunch low, seek shelter, and quietly ask to leave.", mindset: "cautious", consequences: { finalBond: "sanctuary" }, nextPart: "P5-1A1" },
+            { text: "[Curious] Observe the patrons, analyzing their social dynamics.", mindset: "curious", consequences: { finalBond: "detachment" }, nextPart: "P5-1A2" },
+            { text: "[Bold] Initiate a conversation with a nearby stranger.", mindset: "bold", consequences: { finalBond: "tested" }, nextPart: "P5-1A3" }
         ]
     },
-    "P5-2": {
-        narrative: "The need to escape became physically painful. You pulled your sweater tighter, the protective shield feeling necessary and insufficient all at once, and nudged Mitch's arm. \"Can we go home? Please?\" The word 'home' felt safe and distant, the only true refuge left. Mitch immediately agreed, his expression one of immediate concern, recognizing your profound need for safety. You had survived the day without confronting your identity, taking a single psychological risk, or pushing a single boundary. The bond with Mitch was now one of sanctuary—a safe harbor built entirely on your vulnerability and his protection.",
+    "P5-1A1": {
+        narrative: "You retreat successfully, achieving the goal of survival and emotional sanctuary.",
         imageUrl: "ASSET_P5_EXIT_NIGHT",
+        choices: [ { text: "Game End", nextPart: "END" } ]
+    },
+    "P5-1A2": {
+        narrative: "You gather final data points before leaving, feeling detached but satisfied.",
+        imageUrl: "ASSET_P2_OFFICE_DOOR",
+        choices: [ { text: "Game End", nextPart: "END" } ]
+    },
+    "P5-1A3": {
+        narrative: "You quickly test the waters with a stranger before retreating back to Mitch's safety.",
+        imageUrl: "ASSET_P2_OFFICE_DOOR",
+        choices: [ { text: "Game End", nextPart: "END" } ]
+    },
+    "P5-1B": {
+        narrative: "The Stranger (Mark) approaches, forcing a conflict. You must choose who to validate.",
+        imageUrl: "ASSET_P2_OFFICE_DOOR",
         choices: [
-            { text: "[End Game] Final State: Sanctuary achieved.", nextPart: "END" }
+            { text: "[Cautious] Pull Mitch closer, offering the Stranger a polite dismissal.", mindset: "cautious", consequences: { conflictWinner: "mitch" }, nextPart: "P5-1B1" },
+            { text: "[Bold] Give the Stranger a deliberate, prolonged stare that invites the challenge.", mindset: "bold", consequences: { conflictWinner: "stranger" }, nextPart: "P5-1B2" }
         ]
+    },
+    "P5-1B1": {
+        narrative: "Mitch rises to the challenge, successfully defending you. He is the winner.",
+        imageUrl: "ASSET_P2_OFFICE_DOOR",
+        choices: [ { text: "Continue", nextPart: "P5-1B3" } ]
+    },
+    "P5-1B2": {
+        narrative: "You invite the challenge. The Stranger verbally dominates Mitch, becoming the winner.",
+        imageUrl: "ASSET_P2_OFFICE_DOOR",
+        choices: [ { text: "Continue", nextPart: "P5-1B4" } ]
+    },
+    "P5-1B3": {
+        narrative: "Mitch is high on victory. You choose to make a deep, emotional confession to him.",
+        imageUrl: "ASSET_P2_OFFICE_DOOR",
+        choices: [ { text: "Game End", nextPart: "END", consequences: { finalBond: "sanctuary" } } ]
+    },
+    "P5-1B4": {
+        narrative: "Driven by instinctual duty, you follow the Stranger. You must choose the location of the power exchange.",
+        imageUrl: "ASSET_P2_OFFICE_DOOR",
+        choices: [
+            { text: "[Verbal] Bathroom (Confined space, leads to Submission/Mood Restoration).", consequences: { finalBond: "moodRestoration" }, nextPart: "P5-1B4A" },
+            { text: "[Non-Verbal] Alley (Public risk, leads to Mastery/Guilty Duty).", consequences: { finalBond: "guiltyDuty" }, nextPart: "P5-1B4B" }
+        ]
+    },
+    "P5-1B4A": {
+        narrative: "You accept dominance verbally. Your mood is restored. You now must decide Mitch's fate.",
+        imageUrl: "ASSET_P2_OFFICE_DOOR",
+        choices: [ { text: "Continue", nextPart: "P5-1B5" } ]
+    },
+    "P5-1B4B": {
+        narrative: "You command his obedience non-verbally, achieving cold mastery. You feel guilty duty.",
+        imageUrl: "ASSET_P2_OFFICE_DOOR",
+        choices: [ { text: "Continue", nextPart: "P5-1B5" } ]
+    },
+    "P5-1B5": {
+        narrative: "You find Mitch. You must choose whether to offer pity or abandon him to his grief.",
+        imageUrl: "ASSET_P2_OFFICE_DOOR",
+        choices: [
+            { text: "[Cautious] Offer comfort/pity to Mitch.", mindset: "cautious", consequences: { mitchComfort: "pity" }, nextPart: "P5-1B5A" },
+            { text: "[Bold] Walk away from the wreckage.", mindset: "bold", consequences: { mitchComfort: "abandonment" }, nextPart: "P5-1B5B" }
+        ]
+    },
+    "P5-1B5A": {
+        narrative: "You attempt to comfort Mitch. Outcome depends on his consolable state.",
+        imageUrl: "ASSET_P2_OFFICE_DOOR",
+        choices: [ { text: "Game End", nextPart: "END" } ]
+    },
+    "P5-1B5B": {
+        narrative: "You choose the cold path of self-preservation, abandoning Mitch to his grief.",
+        imageUrl: "ASSET_P2_OFFICE_DOOR",
+        choices: [ { text: "Game End", nextPart: "END" } ]
+    },
+    "P5-1C": {
+        narrative: "You arrive with Mitch as a new couple. The night is a display of public celebration and boundary-pushing.",
+        imageUrl: "ASSET_P2_OFFICE_DOOR",
+        choices: [
+            { text: "[Curious] Test reactions from others (men/women) to your pairing.", mindset: "curious", consequences: { finalBond: "performance" }, nextPart: "P5-1C1" },
+            { text: "[Bold] Initiate public, boundary-pushing affection with Mitch.", mindset: "bold", consequences: { finalBond: "exposed" }, nextPart: "P5-1C2" }
+        ]
+    },
+    "P5-1C1": {
+        narrative: "You focus on the sociological experiment of your public relationship.",
+        imageUrl: "ASSET_P2_OFFICE_DOOR",
+        choices: [ { text: "Game End", nextPart: "END" } ]
+    },
+    "P5-1C2": {
+        narrative: "You make a bold, public claim over Mitch, cementing the power dynamic you established.",
+        imageUrl: "ASSET_P2_OFFICE_DOOR",
+        choices: [ { text: "Game End", nextPart: "END" } ]
     }
 };
 
@@ -389,6 +544,8 @@ let gameState = {
     gettingReadyChoice: null,
     mitchBond: null,
     finalBond: null,
+    conflictWinner: null,
+    mitchComfort: null,
     stateHistory: []
 };
 
@@ -889,14 +1046,19 @@ function handleChoice(choice) {
  * Handles a player's choice in the narrative timeline.
  */
 function handleNarrativeChoice(choice) {
-    const { flag, value, nextPart, mindset } = choice;
+    const { consequences, nextPart, mindset } = choice;
 
     // Save a deep copy of the current state to the history
     gameState.stateHistory.push(JSON.parse(JSON.stringify(gameState)));
 
-    // Update the gameState with the new flag
-    if (flag) {
-        gameState[flag] = value;
+    // Apply all consequences from the choice
+    if (consequences) {
+        for (const key in consequences) {
+            if (gameState.hasOwnProperty(key)) {
+                gameState[key] = consequences[key];
+                console.log(`State updated: ${key} is now ${gameState[key]}`);
+            }
+        }
     }
 
     // If the choice affects a mindset, increment the score
@@ -906,11 +1068,6 @@ function handleNarrativeChoice(choice) {
             gameState[mindsetKey]++;
             console.log(`Mindset updated: ${mindsetKey} is now ${gameState[mindsetKey]}`);
         }
-    }
-
-    // Special logic for commute outcomes
-    if (flag === "commuteMethod" && value === "walk") {
-        gameState.isLateForClass = true;
     }
 
     // Advance to the next part of the story, if one is defined
@@ -967,9 +1124,10 @@ function renderNarrativeScene(partId) {
     updateCharacterImage(); // Update the character's portrait
     const part = narrativeTimeline[partId];
 
-    // Update the scene image, falling back to the default if not specified
+    // Update the scene image by looking up the asset name in the database
     if (sceneImage) {
-        sceneImage.src = part?.imageUrl || DEFAULT_SCENE_IMAGE_URL;
+        const imageUrl = sceneImageDatabase[part?.imageUrl] || DEFAULT_SCENE_IMAGE_URL;
+        sceneImage.src = imageUrl;
     }
 
     if (partId === "END") {
