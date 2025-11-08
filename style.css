@@ -24,3 +24,15 @@
 .choice-button {
     transition: all 0.3s ease;
 }
+
+/* Style for choices that are available to the player based on stats */
+.available-choice {
+    box-shadow: 0 0 10px 2px rgba(52, 211, 153, 0.7); /* A glow effect using emerald-400 */
+}
+
+/* Style for the narrative scene image */
+#scene-image {
+    border: 4px dashed #FFD1DC; /* A soft, light pink */
+    padding: 4px;
+    background-color: #1f2937; /* gray-800, to frame the image */
+}

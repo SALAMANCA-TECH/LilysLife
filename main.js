@@ -7,6 +7,16 @@ import configApiKey from './config.js';
 // --- V2.0 DATABASE DEFINITIONS ---
 
 // A constant array listing all 21 attributes.
+const characterImageDatabase = {
+    "base": {
+        "neutral": "https://preview.redd.it/starter-outfit-started-poses-v0-nt3w0wjfhxzf1.jpg?width=320&crop=smart&auto=webp&s=0aaa6da78484c4762040417ea29f63aaef61fed0",
+        "curious": "https://preview.redd.it/starter-outfit-started-poses-v0-erop40w9hxzf1.jpg?width=320&crop=smart&auto=webp&s=30ff4c78700f7716ce4034529e4ac49aae98fac4"
+    },
+    "sweater+skirt": {
+        "neutral": "https://preview.redd.it/starter-outfit-started-poses-v0-xigp5rlkixzf1.jpg?width=320&crop=smart&auto=webp&s=bba1b6ad44351db78abb37a00e363f6355a946d5",
+        "curious": "https://preview.redd.it/starter-outfit-started-poses-v0-ebk3sh8bhxzf1.jpg?width=320&crop=smart&auto=webp&s=af6b82081106c6a871c7bd4f556a4f3ff01c4beb"
+    }
+};
 const ALL_STATS = [
     // Mindset
     'cautious', 'curious', 'bold',
@@ -21,6 +31,13 @@ const ALL_STATS = [
     'enduring', 'feeble',
     'eloquent', 'stuttering'
 ];
+
+// Maps the 21 stats to the three core mindsets.
+const mindsetCategories = {
+    bold: ['bold', 'intimidating', 'alluring', 'dishonorable', 'expressive', 'agile', 'enduring', 'eloquent'],
+    curious: ['curious', 'charming', 'secure', 'logical', 'creative', 'perceptive'],
+    cautious: ['cautious', 'honorable', 'insecure', 'reserved', 'clumsy', 'feeble', 'stuttering']
+};
 
 // --- Firebase & API Globals ---
 // NOTE: These variables are 'undefined' in a local environment.
@@ -90,6 +107,11 @@ const clothingDatabase = {
             name: "Tight Blue Jeans",
             stats: { alluring: 2, expressive: -1, bold: 1, insecure: 1, clumsy: 1 },
             imageUrl: "https://preview.redd.it/new-clothes-im-going-to-stop-soon-and-buckle-down-on-the-v0-y84gfvs76tzf1.jpg?width=320&crop=smart&auto=webp&s=7e53684b4209fc4abe92b083b79961778fe3548a"
+        },
+        "skirt": {
+            name: "Plaid Skirt",
+            stats: { creative: 2, alluring: 1, reserved: -1 },
+            imageUrl: "https://placehold.co/320x427/ffffff/333333?text=Skirt"
         },
         "trousers": {
             name: "Loose Linen Trousers",
@@ -185,6 +207,143 @@ const storyData = {
     }
 };
 
+const DEFAULT_SCENE_IMAGE_URL = "https://preview.redd.it/what-do-yall-think-new-logo-time-v0-8zmlko0klrzf1.jpeg?width=640&crop=smart&auto=webp&s=b37e388430fce2ecd91ae19c637dc7df9930ca58";
+
+const narrativeTimeline = {
+    "P1": {
+        narrative: "[P1: The Awakening] The morning light filters through the blinds. Another day. How will you face it?",
+        imageUrl: "https://placehold.co/600x400/1a1a1a/ffffff?text=Bedroom",
+        choices: [
+            { text: "With caution. Keep your head down.", mindset: "cautious", nextPart: "P2" },
+            { text: "With curiosity. See what happens.", mindset: "curious", nextPart: "P2" },
+            { text: "With boldness. Take control.", mindset: "bold", nextPart: "P2" }
+        ]
+    },
+    "P2": {
+        narrative: "[P2: The Commute] Time to get to the university. How will you travel?",
+        imageUrl: "https://placehold.co/600x400/2a2a2a/ffffff?text=On+The+Way",
+        choices: [
+            { text: "Take the bus. It's crowded, but efficient.", flag: "commuteMethod", value: "bus" },
+            { text: "Ride your bike. It's risky, but freeing.", flag: "commuteMethod", value: "bike" },
+            { text: "Walk. It's slow, but gives you time to think.", flag: "commuteMethod", value: "walk", nextPart: "P1-2" }
+        ]
+    },
+        narrative: "The choice was made: the path of least resistance was slow, quiet isolation. You pulled the thick, charcoal comfy sweater low, the soft fabric a desperate attempt to shield the jarring exposure of the black mini skirt from the world. The journey, usually a brisk fifteen minutes, stretched into forty-five minutes of agonizing, oppressive self-consciousness. Every engine roar, every car that idled at the curb, every glance from a pedestrian felt like a deliberate, hostile inspection of your unfamiliar form. You kept your gaze fixed on the pavement, counting cracks, feeling the heavy, unfamiliar muscle memory of your body resist the urge to run. The internal monologue was a frantic, low whisper: Don’t look. Don’t draw attention. Just endure this punishment. The world felt too loud, too bright, and impossibly heavy. The emotional price of this deliberate retreat was a mandated delay.",
+        imageUrl: "ASSET_P1_COMMUTE_WALK",
+    "P3": {
+        narrative: "[P3: The Work Drop] You pass by Alex's office. They're a minor rival, a social obstacle.",
+        imageUrl: "https://placehold.co/600x400/3a3a3a/ffffff?text=Alex's+Office",
+        emotion: "curious",
+        choices: [
+            { text: "Continue", nextPart: "P2-1" }
+        ]
+    },
+    "P2-1": {
+        narrative: "You arrived at the old office building, your breath ragged and your palms damp with anxiety. The internal thought was a high-pitched, panicked mantra: Do not engage. They will see the difference. You were supposed to check in with your manager, Alex, but the thought of facing a known quantity with this unknown body was paralyzing. You could imagine his familiar, cold irritation—a feeling so strong you practically felt it through the heavy wood of the office door. The air around the door felt thick, charged with the judgment you knew would come if you stepped inside. Every second spent there felt like a risk, demanding a hasty, anonymous retreat before the true confrontation could begin.",
+        imageUrl: "ASSET_P2_OFFICE_DOOR",
+        choices: [
+            { text: "[Cautious] Slip the folder under the door and leave a quick text explaining I had to rush to class.", mindset: "cautious", flag: "alexRelationship", value: "hostile", nextPart: "P2-2" },
+            { text: "[Curious] Watch Alex from a distance, observing his behavior before deciding to interact." },
+            { text: "[Bold] Walk in, make direct eye contact, and initiate a conversation." }
+        ]
+    },
+    "P2-2": {
+        narrative: "You rushed across campus, carrying the new weight of social failure from the office. When you finally reached the Business School, you fumbled with the heavy lecture hall door. The brightly lit, sterile hall was entirely silent as you stepped inside. Dr. Thorne, the professor, paused his dense lecture on supply chains mid-sentence. The silence was immediate, cutting, and absolute. Seventy pairs of eyes, all focused intently on you, amplified the feeling of raw, unwelcome exposure. You could feel the protective shape of your sweater doing nothing to deflect the attention. The air felt heavy, waiting for the inevitable reprimand.",
+        imageUrl: "ASSET_P2_LECTURE_HALL_ENTRANCE",
+        choices: [
+            { text: "[Continue] Face the professor.", nextPart: "P2-3" }
+        ]
+    },
+    "P2-3": {
+        narrative: "\"Lily,\" Dr. Thorne stated flatly, his voice amplified and booming through the mic. \"You're late. Again.\" He paused, letting the full weight of the class's collective attention settle on your shoulders. \"Your grades are slipping, your participation is non-existent, and frankly, I expect better from someone in your position.\" You finally found your seat, sinking low, desperate to melt into the uncomfortable plastic. The weight of his words and the collective gaze amplified the feeling of profound social incompetence. You knew you should participate to mitigate the damage, but the sound of your own voice in this new register, the risk of saying something wrong, was utterly paralyzing.",
+        imageUrl: "ASSET_P2_LECTURE_HALL",
+        choices: [
+            { text: "[Cautious] Keep my head down, pretend to be taking notes, and avoid all eye contact.", mindset: "cautious", nextPart: "P3-1" },
+            { text: "[Curious] Write a complex question on a note card and pass it to the professor without speaking." },
+            { text: "[Bold] Raise my hand immediately and aggressively challenge the professor on a minor point." }
+        ]
+    },
+    "P3-1": {
+        narrative: "The wrestling gym was a raw, physical assault on the senses. The air was thick and humid, filled with the sharp scent of rubber matting, disinfectant, and overwhelming sweat. The soundscape was dominated by grunts, sharp breaths, and the loud rhythmic slap of bodies hitting the floor. The sight of the large, muscular forms moving with violent, controlled purpose was terrifying—you felt clumsy and infinitely small. You stood near the entrance, frozen, utterly out of place, watching the choreography of aggression unfold.",
+        imageUrl: "ASSET_P3_WRESTLING_MAT_OVERVIEW",
+        choices: [
+            { text: "[Continue] Proceed to the mat area.", nextPart: "P3-2" }
+        ]
+    },
+    "P3-2": {
+        narrative: "Coach spotted you. His face, weathered and stern, hardened into an expression of impatience. His instructions were a sharp, demanding bark: \"LILY! Get changed! You're burning daylight!\" He didn't ask; he commanded. He pointed an aggressive finger toward the doorway leading to the hostile environment of the men's locker room. Every shred of anxiety you had managed to contain since class instantly re-emerged. You had to obey, forcing you to confront the intimate setting you most feared.",
+        imageUrl: "ASSET_P3_COACH",
+        choices: [
+            { text: "[Continue] Enter the locker room.", nextPart: "P3-3" }
+        ]
+    },
+    "P3-3": {
+        narrative: "Inside, the air was heavy, hot, and thick with steam from the showers. The casual nudity, the easy confidence, and the loud, relaxed chatter of the teammates was a shocking, unbearable contrast to your internal panic. You located your locker. The singlet, thin and brutally exposing, felt like a joke. Your only thought was a single, desperate word: escape. You needed to get out of the clothes you were in and into the uniform with minimal social notice.",
+        imageUrl: "ASSET_P3_LOCKER_ROOM",
+        choices: [
+            { text: "[Cautious] Face the back of the locker, change quickly, shaking slightly, body hidden from view.", mindset: "cautious", nextPart: "P3-4" },
+            { text: "[Curious] Change quickly, but clinically scan the room, gathering data on the others." },
+            { text: "[Bold] Change openly, meeting teammates' eyes to assert presence." }
+        ]
+    },
+    "P3-4": {
+        narrative: "You rushed onto the mat, heart pounding, determined to endure the physical drill. The singlet felt like a flag of surrender. You were immediately clumsy, weak, and uncoordinated in the aggressive stance. Coach shouted a drill instruction, and the physical punishment began. The first few partners were a blur of quick, efficient takedowns, leaving your body aching and your mind spiraling in shame over your lack of physical control.",
+        imageUrl: "ASSET_P3_GRAPPLE_START",
+        choices: [
+            { text: "[Continue] Prepare for the next partner.", nextPart: "P3-5" }
+        ]
+    },
+    "P3-5": {
+        narrative: "Then came Ben. He was focused, strong, and when he executed the cradle hold, it was sudden, pinning you with intimate, overwhelming pressure. His weight pressed you into the mat; his thigh was a solid barrier. Then came the intrusion: his hand came too high, his thumb brushing your inner thigh. The \"flutter\" was confusing, terrifying, and deeply intrusive—a feeling you couldn't process, only reject. You couldn't process the sudden chemical spike; you could only process the searing shame of the physical exposure and the violation of your boundaries.",
+        imageUrl: "ASSET_P3_GRAPPLE_CLOSE",
+        choices: [
+            { text: "[Cautious] Shyly try to pull his hand away, resisting the intrusive pressure.", mindset: "cautious", flag: "practiceControl", value: "humiliated", nextPart: "P4-1" },
+            { text: "[Curious] Freeze, analyzing the chemical and hormonal \"flutter.\"" },
+            { text: "[Bold] Lean into the touch, \"allowing\" it to assert control over the sensation." }
+        ]
+    },
+    "P4-1": {
+        narrative: "The shame of the wrestling mat clung to you like stale sweat, heavy and inescapable. You met Mitch outside, near his car. He didn't need to ask what was wrong. He saw your drawn face and the profound emotional agony reflected in your eyes. \"You look like you need two things, not one,\" he murmured, his voice gentle and low, a sudden anchor in the storm. \"You need a drink... and clothes.\" His simple offer of non-judgmental comfort cracked the armor of your self-repression. You needed privacy, refuge, and above all, to hide from any further confrontation.",
+        imageUrl: "ASSET_P4_MITCH_CAR",
+        choices: [
+            { text: "[Cautious] Rummage the Closet: Seek privacy and safety in familiar surroundings.", flag: "gettingReadyChoice", value: "closet", nextPart: "P4-2" },
+            { text: "[Bold] Go Shopping: Force public exposure and new confrontations." }
+        ]
+    },
+    "P4-2": {
+        narrative: "Inside the apartment, you retreated instantly to the dark, small confines of the closet. The clothes were overwhelming—too many colors, too many fabrics, too many reminders of the person you were forced to inhabit. The thought of putting on anything bold or new felt like forcing a painful lie. Mitch stayed in the living room, quiet and understanding, sensing your desperate need for isolation. You prioritized blending in over confronting your new reality, needing camouflage above all else.",
+        imageUrl: "ASSET_P4_CLOSET",
+        choices: [
+            { text: "[Cautious] Choose oversized, loose-fitting clothes to hide the body entirely.", mindset: "cautious", nextPart: "P4-3" },
+            { text: "[Curious] Select something slightly provocative but entirely analytical—a test case." },
+            { text: "[Bold] Choose a dramatically revealing, defiant outfit." }
+        ]
+    },
+    "P4-3": {
+        narrative: "You emerged in a large, shapeless, charcoal-gray dress that was utterly forgettable and entirely protective. It was the color of shadows, a refusal to be seen. Mitch smiled kindly and offered only platonic support, recognizing your need for safety above style. \"You look great, Lily. Ready to go?\" The tension was entirely absent, replaced by quiet, loyal camaraderie. Your connection was now defined by comfort, refuge, and non-confrontation—a safe harbor from the turbulent day.",
+        imageUrl: "ASSET_P4_COAT_FINAL",
+        choices: [
+            { text: "[Continue] Head to the bar.", flag: "mitchBond", value: "friend", nextPart: "P5-1" }
+        ]
+    },
+    "P5-1": {
+        narrative: "The bar was loud, dark, and crowded, but nestled in a quiet booth with Mitch, it felt safe. You had achieved a fragile shield. You and Mitch arrived as platonic friends, your connection a solid barrier against the chaos of the night. Mitch talked easily about his week, his presence a comforting anchor, drawing the attention away from you. You focused on the steady, familiar rhythm of his voice, letting it wash over you, desperately trying to ignore the lingering, shaming sensation of the humiliating pin. The evening was becoming an exhausting act of holding your breath.",
+        imageUrl: "ASSET_P5_BAR_SAFE",
+        choices: [
+            { text: "[Cautious] Hunch low, seek shelter behind Mitch, and quietly ask to leave.", mindset: "cautious", flag: "finalBond", value: "sanctuary", nextPart: "P5-2" },
+            { text: "[Curious] Stay late, observing the other patrons, analyzing their social dynamics." },
+            { text: "[Bold] Initiate a conversation with a nearby stranger, pushing a social boundary." }
+        ]
+    },
+    "P5-2": {
+        narrative: "The need to escape became physically painful. You pulled your sweater tighter, the protective shield feeling necessary and insufficient all at once, and nudged Mitch's arm. \"Can we go home? Please?\" The word 'home' felt safe and distant, the only true refuge left. Mitch immediately agreed, his expression one of immediate concern, recognizing your profound need for safety. You had survived the day without confronting your identity, taking a single psychological risk, or pushing a single boundary. The bond with Mitch was now one of sanctuary—a safe harbor built entirely on your vulnerability and his protection.",
+        imageUrl: "ASSET_P5_EXIT_NIGHT",
+        choices: [
+            { text: "[End Game] Final State: Sanctuary achieved.", nextPart: "END" }
+        ]
+    }
+};
+
 // --- V2.0 GAME LOGIC ---
 
 /**
@@ -213,7 +372,23 @@ let gameState = {
         intent: null
     },
     currentScene: "S1_08",
-    userId: null // Will be set after auth
+    userId: null, // Will be set after auth
+
+    // --- New V3 Narrative State ---
+    // Mindset scores, calculated from clothing at the start.
+    mindset_cautious: 0,
+    mindset_curious: 0,
+    mindset_bold: 0,
+
+    // Narrative Timeline Flags
+    currentPart: "P1",
+    commuteMethod: null,
+    isLateForClass: false,
+    alexRelationship: null,
+    practiceControl: null,
+    gettingReadyChoice: null,
+    mitchBond: null,
+    finalBond: null
 };
 
 // --- DOM Element References ---
@@ -233,7 +408,7 @@ const wardrobeData = {
     "bottom": {
         narrative: "What will Lily wear on the bottom?",
         choices: [
-            { text: "Tight Blue Jeans", key: "jeans", category: "outfit_bottom", nextStep: "shoes", functional: true },
+            { text: "Plaid Skirt", key: "skirt", category: "outfit_bottom", nextStep: "shoes", functional: true },
             { text: "Loose Linen Trousers", key: "trousers", category: "outfit_bottom", nextStep: "shoes", functional: false }
         ]
     },
@@ -275,6 +450,35 @@ function recalculateStats() {
 }
 
 /**
+ * Calculates the initial mindset scores based on categorized stats from clothing.
+ * This is called once after the wardrobe selection is complete.
+ */
+function calculateInitialMindsetScores() {
+    // Ensure mindset scores are part of gameState and reset them
+    gameState.mindset_cautious = 0;
+    gameState.mindset_curious = 0;
+    gameState.mindset_bold = 0;
+
+    // Sum stats for each mindset category
+    for (const mindset in mindsetCategories) {
+        let total = 0;
+        mindsetCategories[mindset].forEach(stat => {
+            if (gameState.stats.hasOwnProperty(stat)) {
+                total += gameState.stats[stat];
+            }
+        });
+        // Assign the calculated total to the corresponding gameState property
+        gameState[`mindset_${mindset}`] = total;
+    }
+
+    console.log("Initial mindset scores calculated:", {
+        cautious: gameState.mindset_cautious,
+        curious: gameState.mindset_curious,
+        bold: gameState.mindset_bold
+    });
+}
+
+/**
  * Updates the UI meters based on the current gameState.
  */
 function updateMeters() {
@@ -295,6 +499,59 @@ function updateMeters() {
         meterBarBold.style.width = `${boldPercent}%`;
     }
 }
+
+/**
+ * Updates the character image based on the current outfit and narrative emotion.
+ */
+function updateCharacterImage() {
+    // Query the DOM for the element each time to avoid stale references.
+    const characterImageEl = document.getElementById('character-image');
+    if (!characterImageEl) {
+        console.error("Could not find the 'character-image' element.");
+        return;
+    }
+
+    const part = narrativeTimeline[gameState.currentPart];
+    const emotion = part?.emotion || "neutral"; // Default to neutral if no emotion is specified
+
+    let outfitKey = "base"; // Default to the base nude model
+
+    // Create an outfit key if a top and bottom are equipped
+    const top = gameState.equipped.outfit_top;
+    const bottom = gameState.equipped.outfit_bottom;
+    if (top && bottom) {
+        outfitKey = `${top}+${bottom}`;
+    }
+    // TODO: Add logic for 'outfit_all' (dresses) if needed.
+
+    // --- Image URL Lookup with Fallbacks ---
+    let imageUrl = characterImageDatabase.base.neutral; // Ultimate fallback
+
+    const outfitImages = characterImageDatabase[outfitKey];
+    const baseImages = characterImageDatabase.base;
+
+    if (outfitImages) {
+        // 1. Try to find the specific emotion for the outfit
+        if (outfitImages[emotion]) {
+            imageUrl = outfitImages[emotion];
+        }
+        // 2. Fallback to the neutral version of the outfit
+        else if (outfitImages.neutral) {
+            imageUrl = outfitImages.neutral;
+        }
+    } else {
+        // 3. If outfit not found, fallback to the base model for the specific emotion
+        if (baseImages[emotion]) {
+            imageUrl = baseImages[emotion];
+        }
+        // 4. The final fallback is the neutral base model (already set)
+    }
+
+    // Update the image on the screen
+    characterImageEl.src = imageUrl;
+    console.log(`Updating character image. Emotion: ${emotion}, Outfit: ${outfitKey}, URL: ${imageUrl}`);
+}
+
 
 /**
  * Toggles the loading overlay.
@@ -448,15 +705,12 @@ async function generateNarrative(sceneId) {
 
     const systemPrompt = `You are Delilah, a narrative co-author for an interactive game. Your role is to write the descriptive prose for a scene. You must not violate content policies. Focus on internal monologue, atmosphere, and identity. Keep the text to a single, engaging paragraph.`;
     
-    const userQuery = `Write the narrative text for scene '${sceneId}'.
-        The player's current stats are:
-        - Cautious: ${gameState.stats.cautious}
-        - Curious: ${gameState.stats.curious}
-        - Bold: ${gameState.stats.bold}
-        
-        The player just equipped: ${JSON.stringify(gameState.equipped)}
-        
-        Based on these stats, write a brief, non-sensitive, SFW paragraph (about 2-3 sentences) describing the character's internal thoughts as they progress through this stage of getting dressed ('${sceneId}').`;
+    let userQuery;
+    if (sceneId === "S1_08") {
+        userQuery = `Write a calm, introspective introductory paragraph for the first scene of a narrative RPG called "Lily's Life." The scene is S1_08, where Lily is about to choose her underwear. The paragraph should set a quiet, thoughtful tone, focusing on the character's internal state without explicitly mentioning the clothing choice.`;
+    } else {
+        userQuery = `Write a concise internal monologue for Lily in scene '${sceneId}'. This should reflect her mindset based on her stats (Cautious: ${gameState.stats.cautious}, Curious: ${gameState.stats.curious}, Bold: ${gameState.stats.bold}) and the impact of the item she just selected or chose to skip. Her current equipped items are: ${JSON.stringify(gameState.equipped)}. The monologue should be a brief, non-sensitive, SFW paragraph of 1-2 sentences.`;
+    }
 
     const payload = {
         contents: [{ parts: [{ text: userQuery }] }],
@@ -631,6 +885,37 @@ function handleChoice(choice) {
 }
 
 /**
+ * Handles a player's choice in the narrative timeline.
+ */
+function handleNarrativeChoice(choice) {
+    const { flag, value, nextPart, mindset } = choice;
+
+    // Update the gameState with the new flag
+    if (flag) {
+        gameState[flag] = value;
+    }
+
+    // If the choice affects a mindset, increment the score
+    if (mindset) {
+        const mindsetKey = `mindset_${mindset}`;
+        if (gameState.hasOwnProperty(mindsetKey)) {
+            gameState[mindsetKey]++;
+            console.log(`Mindset updated: ${mindsetKey} is now ${gameState[mindsetKey]}`);
+        }
+    }
+
+    // Special logic for commute outcomes
+    if (flag === "commuteMethod" && value === "walk") {
+        gameState.isLateForClass = true;
+    }
+
+    // Advance to the next part of the story, if one is defined
+    if (nextPart) {
+        renderNarrativeScene(nextPart);
+    }
+}
+
+/**
  * Renders a new scene in the UI.
  * NOW calls AI for narrative text.
  */
@@ -664,11 +949,106 @@ async function renderScene(sceneId) {
         }, 100 * (index + 1));
     });
 
-    // (AI TASK 1) Trigger image generation only on the final scene
-    if (sceneId === 'S1_END') {
-        await generateCharacterImage();
-    }
+    // The old image generation is no longer needed.
+    // if (sceneId === 'S1_END') {
+    //     await generateCharacterImage();
+    // }
 }
+
+/**
+ * Renders a narrative scene from the timeline.
+ */
+function renderNarrativeScene(partId) {
+    gameState.currentPart = partId;
+    updateCharacterImage(); // Update the character's portrait
+    const part = narrativeTimeline[partId];
+
+    // Update the scene image, falling back to the default if not specified
+    if (sceneImage) {
+        sceneImage.src = part?.imageUrl || DEFAULT_SCENE_IMAGE_URL;
+    }
+
+    if (partId === "END") {
+        const finalStats = `FINAL_STATS: Cautious (${gameState.mindset_cautious}) / Curious (${gameState.mindset_curious}) / Bold (${gameState.mindset_bold})`;
+        narrativeContainer.innerHTML = `<p class="mb-4">The story concludes for now. ${finalStats}</p>`;
+        choicesContainer.innerHTML = ''; // Clear choices
+
+        // --- V3 UI FIX: Show the main menu again ---
+        const mainMenuContainer = document.getElementById('main-menu-container');
+        if (mainMenuContainer) {
+            mainMenuContainer.classList.remove('hidden');
+        }
+
+        // Optionally, add a button to restart the narrative
+        const restartButton = document.createElement('button');
+        restartButton.textContent = "Start Over";
+        restartButton.className = "choice-button w-full p-3 bg-indigo-500 rounded-lg text-left text-white hover:bg-indigo-600";
+        restartButton.onclick = () => {
+            // This could reset the narrative flags and go back to P1 or the wardrobe
+            location.reload(); // Simple reload for now
+        };
+        choicesContainer.appendChild(restartButton);
+        return;
+    }
+
+    if (!part) {
+        console.error(`Narrative part '${partId}' not found!`);
+        narrativeContainer.innerHTML = `<p class="mb-4 text-red-400">Error: Narrative part not found.</p>`;
+        return;
+    }
+
+    // --- Consequence Checks & Narrative Modification ---
+    let narrative = part.narrative; // Start with the default narrative
+
+    // P4 Check: Is the player late for class?
+    if (partId === "P4" && gameState.isLateForClass) {
+        narrative = "Arriving late after the walk, Lily slips into the classroom, trying to be unnoticed. " + narrative;
+    }
+
+    // P7 Check: What is the bond with Mitch?
+    if (partId === "P7") {
+        switch (gameState.mitchBond) {
+            case "friend":
+                narrative = "P7 [Friend]: At the bar, the goal is survival, a safe harbor. The noise of the crowd feels like a wall between Lily and the world." + narrative;
+                break;
+            case "blurry":
+                narrative = "P7 [Blurry]: The air in the bar is thick with unspoken tension. A choice hangs in the air between the familiar face of Mitch and the allure of a stranger." + narrative;
+                break;
+            case "intimate":
+                narrative = "P7 [Intimate]: This isn't just a night out; it's a victory lap. Every glance from Mitch feels like a shared secret, a celebration of boundaries pushed together." + narrative;
+                break;
+        }
+    }
+
+    // Update narrative text
+    narrativeContainer.innerHTML = `<p class="mb-4">${narrative}</p>`;
+
+    // Clear old choices
+    choicesContainer.innerHTML = '';
+
+    // Create and append new choices
+    part.choices.forEach((choice, index) => {
+        const button = document.createElement('button');
+        button.textContent = choice.text;
+
+        if (choice.nextPart) {
+            button.className = "choice-button w-full p-3 bg-gray-700 rounded-lg text-left text-indigo-300 hover:bg-indigo-600 hover:text-white transform opacity-0 translate-y-2";
+            button.onclick = () => handleNarrativeChoice(choice);
+            button.classList.add('available-choice');
+        } else {
+            button.className = "choice-button w-full p-3 bg-gray-800 rounded-lg text-left text-gray-500 cursor-not-allowed transform opacity-0 translate-y-2";
+            button.disabled = true;
+        }
+
+        choicesContainer.appendChild(button);
+
+        // Animate choices in
+        setTimeout(() => {
+            button.classList.remove('opacity-0', 'translate-y-2');
+        }, 100 * (index + 1));
+    });
+}
+
 
 /**
  * Initializes Firebase connection.
@@ -737,35 +1117,18 @@ document.addEventListener('DOMContentLoaded', () => {
     loadButton = document.getElementById('load-button');
     beginButton = document.getElementById('begin-button');
     continueButton = document.getElementById('continue-button');
-
-
-    // Add event listeners
-    saveButton.onclick = saveGame;
-    loadButton.onclick = loadGame;
-    beginButton.onclick = () => {
-        renderScene(gameState.currentScene);
-        beginButton.classList.add('hidden');
-        continueButton.classList.remove('hidden');
-    };
-    continueButton.onclick = () => {
-        // This assumes the AI's response will trigger the next scene or choices.
-        // If not, you'll need to add logic here to advance the scene.
-        generateNarrative(gameState.currentScene);
-    };
-
     wardrobeButton = document.getElementById('wardrobe-button');
+    const mainMenuContainer = document.getElementById('main-menu-container');
 
     // Add event listeners
     saveButton.onclick = saveGame;
     loadButton.onclick = loadGame;
     beginButton.onclick = () => {
-        renderScene(gameState.currentScene);
-        beginButton.classList.add('hidden');
-        continueButton.classList.remove('hidden');
+        mainMenuContainer.classList.add('hidden');
+        // V3 FIX: Start the new narrative timeline instead of the old scene system.
+        renderNarrativeScene("P1");
     };
     continueButton.onclick = () => {
-        // This assumes the AI's response will trigger the next scene or choices.
-        // If not, you'll need to add logic here to advance the scene.
         generateNarrative(gameState.currentScene);
     };
     wardrobeButton.onclick = () => {
@@ -773,18 +1136,18 @@ document.addEventListener('DOMContentLoaded', () => {
         ALL_STATS.forEach(stat => newStats[stat] = 0);
         gameState.stats = newStats;
         updateMeters();
+        mainMenuContainer.classList.add('hidden');
         renderWardrobeStep("top");
     };
 
     // Start the game by initializing Firebase
-    // This will, in turn, call renderScene
     initializeFirebase();
 });
 
 function renderWardrobeStep(step) {
     if (step === "end") {
-        narrativeContainer.innerHTML = `<p class="mb-4">Outfit Selected</p>`;
-        choicesContainer.innerHTML = '';
+        calculateInitialMindsetScores(); // Calculate mindset scores from final clothing stats
+        renderNarrativeScene("P1"); // Start the narrative timeline
         return;
     }
 
