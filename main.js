@@ -209,26 +209,27 @@ const storyData = {
 
 const narrativeTimeline = {
     "P1": {
-        narrative: "[P1: The Awakening] The morning light filters through the blinds. Another day. How will you face it?",
-        imageUrl: "placeholder.jpg",
+        narrative: "The morning light filters through the blinds, painting stripes across the room. It's a new day, another chance to define who you are. The reflection in the mirror is still a stranger, a puzzle you're slowly piecing together. The first choice of the day is always the hardest: how to face the world waiting outside.",
+        imageUrl: "ASSET_P1_BEDROOM",
         choices: [
-            { text: "With caution. Keep your head down.", mindset: "cautious", nextPart: "P2" },
-            { text: "With curiosity. See what happens.", mindset: "curious", nextPart: "P2" },
-            { text: "With boldness. Take control.", mindset: "bold", nextPart: "P2" }
+            { text: "[Cautious] Ugh, another day. Let's just get this over with. Keep a low profile.", mindset: "cautious", nextPart: "P1-1" },
+            { text: "[Curious] I wonder what today will be like? So many possibilities to explore.", mindset: "curious", nextPart: "P1-1" },
+            { text: "[Bold] This is my day. I'm going to own it. Time to make a statement.", mindset: "bold", nextPart: "P1-1" }
         ]
     },
-    "P2": {
-        narrative: "[P2: The Commute] Time to get to the university. How will you travel?",
-        imageUrl: "placeholder.jpg",
+    "P1-1": {
+        narrative: "Time to get to the university. The commute is a battlefield, a series of choices that will set the tone for the entire day. Each option has its own risks, its own rewards.",
+        imageUrl: "ASSET_P1_COMMUTE_MAP",
         choices: [
-            { text: "Take the bus. It's crowded, but efficient.", flag: "commuteMethod", value: "bus", nextPart: "P1-2" },
-            { text: "Ride your bike. It's risky, but freeing.", flag: "commuteMethod", value: "bike", nextPart: "P1-2" },
-            { text: "Walk. It's slow, but gives you time to think.", flag: "commuteMethod", value: "walk", nextPart: "P1-2" }
+            { text: "[Cautious] Walk. It's slow and agonizing, but it avoids people.", flag: "commuteMethod", value: "walk", nextPart: "P1-2" },
+            { text: "[Curious] Take the bus. It's a petri dish of social interaction.", flag: "commuteMethod", value: "bus", nextPart: "P1-2" },
+            { text: "[Bold] Ride your bike. It's fast, risky, and gets the adrenaline pumping.", flag: "commuteMethod", value: "bike", nextPart: "P1-2" }
         ]
     },
     "P1-2": {
         narrative: "The choice was made: the path of least resistance was slow, quiet isolation. You pulled the thick, charcoal comfy sweater low, the soft fabric a desperate attempt to shield the jarring exposure of the black mini skirt from the world. The journey, usually a brisk fifteen minutes, stretched into forty-five minutes of agonizing, oppressive self-consciousness. Every engine roar, every car that idled at the curb, every glance from a pedestrian felt like a deliberate, hostile inspection of your unfamiliar form. You kept your gaze fixed on the pavement, counting cracks, feeling the heavy, unfamiliar muscle memory of your body resist the urge to run. The internal monologue was a frantic, low whisper: Don’t look. Don’t draw attention. Just endure this punishment. The world felt too loud, too bright, and impossibly heavy. The emotional price of this deliberate retreat was a mandated delay.",
         imageUrl: "ASSET_P1_COMMUTE_WALK",
+        // This scene sets the isLateForClass flag internally
         choices: [
             { text: "Continue", nextPart: "P2-1" }
         ]
@@ -238,8 +239,8 @@ const narrativeTimeline = {
         imageUrl: "ASSET_P2_OFFICE_DOOR",
         choices: [
             { text: "[Cautious] Slip the folder under the door and leave a quick text explaining I had to rush to class.", mindset: "cautious", flag: "alexRelationship", value: "hostile", nextPart: "P2-2" },
-            { text: "[Curious] Watch Alex from a distance, observing his behavior before deciding to interact." },
-            { text: "[Bold] Walk in, make direct eye contact, and initiate a conversation." }
+            { text: "[Curious] Watch Alex from a distance, observing his behavior before deciding to interact.", mindset: "curious", nextPart: "P2-2" },
+            { text: "[Bold] Walk in, make direct eye contact, and initiate a conversation.", mindset: "bold", nextPart: "P2-2" }
         ]
     },
     "P2-2": {
@@ -254,8 +255,8 @@ const narrativeTimeline = {
         imageUrl: "ASSET_P2_LECTURE_HALL",
         choices: [
             { text: "[Cautious] Keep my head down, pretend to be taking notes, and avoid all eye contact.", mindset: "cautious", nextPart: "P3-1" },
-            { text: "[Curious] Write a complex question on a note card and pass it to the professor without speaking." },
-            { text: "[Bold] Raise my hand immediately and aggressively challenge the professor on a minor point." }
+            { text: "[Curious] Write a complex question on a note card and pass it to the professor without speaking.", mindset: "curious", nextPart: "P3-1" },
+            { text: "[Bold] Raise my hand immediately and aggressively challenge the professor on a minor point.", mindset: "bold", nextPart: "P3-1" }
         ]
     },
     "P3-1": {
@@ -277,8 +278,8 @@ const narrativeTimeline = {
         imageUrl: "ASSET_P3_LOCKER_ROOM",
         choices: [
             { text: "[Cautious] Face the back of the locker, change quickly, shaking slightly, body hidden from view.", mindset: "cautious", nextPart: "P3-4" },
-            { text: "[Curious] Change quickly, but clinically scan the room, gathering data on the others." },
-            { text: "[Bold] Change openly, meeting teammates' eyes to assert presence." }
+            { text: "[Curious] Change quickly, but clinically scan the room, gathering data on the others.", mindset: "curious", nextPart: "P3-4" },
+            { text: "[Bold] Change openly, meeting teammates' eyes to assert presence.", mindset: "bold", nextPart: "P3-4" }
         ]
     },
     "P3-4": {
@@ -293,8 +294,8 @@ const narrativeTimeline = {
         imageUrl: "ASSET_P3_GRAPPLE_CLOSE",
         choices: [
             { text: "[Cautious] Shyly try to pull his hand away, resisting the intrusive pressure.", mindset: "cautious", flag: "practiceControl", value: "humiliated", nextPart: "P4-1" },
-            { text: "[Curious] Freeze, analyzing the chemical and hormonal \"flutter.\"" },
-            { text: "[Bold] Lean into the touch, \"allowing\" it to assert control over the sensation." }
+            { text: "[Curious] Freeze, analyzing the chemical and hormonal \"flutter.\"", mindset: "curious", flag: "practiceControl", value: "analytical", nextPart: "P4-1" },
+            { text: "[Bold] Lean into the touch, \"allowing\" it to assert control over the sensation.", mindset: "bold", flag: "practiceControl", value: "empowered", nextPart: "P4-1" }
         ]
     },
     "P4-1": {
@@ -302,7 +303,7 @@ const narrativeTimeline = {
         imageUrl: "ASSET_P4_MITCH_CAR",
         choices: [
             { text: "[Cautious] Rummage the Closet: Seek privacy and safety in familiar surroundings.", flag: "gettingReadyChoice", value: "closet", nextPart: "P4-2" },
-            { text: "[Bold] Go Shopping: Force public exposure and new confrontations." }
+            { text: "[Bold] Go Shopping: Force public exposure and new confrontations.", flag: "gettingReadyChoice", value: "shopping", nextPart: "P4-2" }
         ]
     },
     "P4-2": {
@@ -310,8 +311,8 @@ const narrativeTimeline = {
         imageUrl: "ASSET_P4_CLOSET",
         choices: [
             { text: "[Cautious] Choose oversized, loose-fitting clothes to hide the body entirely.", mindset: "cautious", nextPart: "P4-3" },
-            { text: "[Curious] Select something slightly provocative but entirely analytical—a test case." },
-            { text: "[Bold] Choose a dramatically revealing, defiant outfit." }
+            { text: "[Curious] Select something slightly provocative but entirely analytical—a test case.", mindset: "curious", nextPart: "P4-3" },
+            { text: "[Bold] Choose a dramatically revealing, defiant outfit.", mindset: "bold", nextPart: "P4-3" }
         ]
     },
     "P4-3": {
@@ -326,8 +327,8 @@ const narrativeTimeline = {
         imageUrl: "ASSET_P5_BAR_SAFE",
         choices: [
             { text: "[Cautious] Hunch low, seek shelter behind Mitch, and quietly ask to leave.", mindset: "cautious", flag: "finalBond", value: "sanctuary", nextPart: "P5-2" },
-            { text: "[Curious] Stay late, observing the other patrons, analyzing their social dynamics." },
-            { text: "[Bold] Initiate a conversation with a nearby stranger, pushing a social boundary." }
+            { text: "[Curious] Stay late, observing the other patrons, analyzing their social dynamics.", mindset: "curious", flag: "finalBond", value: "observation", nextPart: "P5-2" },
+            { text: "[Bold] Initiate a conversation with a nearby stranger, pushing a social boundary.", mindset: "bold", flag: "finalBond", value: "confrontation", nextPart: "P5-2" }
         ]
     },
     "P5-2": {
@@ -1030,8 +1031,8 @@ function renderNarrativeScene(partId) {
             button.onclick = () => handleNarrativeChoice(choice);
             button.classList.add('available-choice');
         } else {
-            button.className = "choice-button w-full p-3 bg-gray-800 rounded-lg text-left text-gray-500 cursor-not-allowed transform opacity-0 translate-y-2";
-            button.disabled = true;
+            button.className = "choice-button w-full p-3 bg-gray-800 rounded-lg text-left text-gray-500 hover:bg-gray-700 transform opacity-0 translate-y-2";
+            button.onclick = () => showComingSoonPopup();
         }
 
         choicesContainer.appendChild(button);
@@ -1071,6 +1072,18 @@ function goBack() {
     }
 }
 
+/**
+ * Shows a temporary "Coming Soon" popup.
+ */
+function showComingSoonPopup() {
+    const popup = document.getElementById('coming-soon-popup');
+    if (popup) {
+        popup.classList.remove('hidden');
+        setTimeout(() => {
+            popup.classList.add('hidden');
+        }, 1500); // Hide after 1.5 seconds
+    }
+}
 
 /**
  * Initializes Firebase connection.
