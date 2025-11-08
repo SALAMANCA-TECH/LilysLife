@@ -210,6 +210,7 @@ const storyData = {
 const narrativeTimeline = {
     "P1": {
         narrative: "[P1: The Awakening] The morning light filters through the blinds. Another day. How will you face it?",
+        imageUrl: "placeholder.jpg",
         choices: [
             { text: "With caution. Keep your head down.", mindset: "cautious", nextPart: "P2" },
             { text: "With curiosity. See what happens.", mindset: "curious", nextPart: "P2" },
@@ -218,51 +219,122 @@ const narrativeTimeline = {
     },
     "P2": {
         narrative: "[P2: The Commute] Time to get to the university. How will you travel?",
+        imageUrl: "placeholder.jpg",
         choices: [
-            { text: "Take the bus. It's crowded, but efficient.", flag: "commuteMethod", value: "bus", nextPart: "P3" },
-            { text: "Ride your bike. It's risky, but freeing.", flag: "commuteMethod", value: "bike", nextPart: "P3" },
-            { text: "Walk. It's slow, but gives you time to think.", flag: "commuteMethod", value: "walk", nextPart: "P3" }
+            { text: "Take the bus. It's crowded, but efficient.", flag: "commuteMethod", value: "bus" },
+            { text: "Ride your bike. It's risky, but freeing.", flag: "commuteMethod", value: "bike" },
+            { text: "Walk. It's slow, but gives you time to think.", flag: "commuteMethod", value: "walk", nextPart: "P1-2" }
         ]
     },
-    "P3": {
-        narrative: "[P3: The Work Drop] You pass by Alex's office. They're a minor rival, a social obstacle.",
-        emotion: "curious",
+    "P1-2": {
+        narrative: "The choice was made: the path of least resistance was slow, quiet isolation. You pulled the thick, charcoal comfy sweater low, the soft fabric a desperate attempt to shield the jarring exposure of the black mini skirt from the world. The journey, usually a brisk fifteen minutes, stretched into forty-five minutes of agonizing, oppressive self-consciousness. Every engine roar, every car that idled at the curb, every glance from a pedestrian felt like a deliberate, hostile inspection of your unfamiliar form. You kept your gaze fixed on the pavement, counting cracks, feeling the heavy, unfamiliar muscle memory of your body resist the urge to run. The internal monologue was a frantic, low whisper: Don’t look. Don’t draw attention. Just endure this punishment. The world felt too loud, too bright, and impossibly heavy. The emotional price of this deliberate retreat was a mandated delay.",
+        imageUrl: "ASSET_P1_COMMUTE_WALK",
         choices: [
-            { text: "Avoid eye contact and hurry past.", flag: "alexRelationship", value: "avoid", nextPart: "P4" },
-            { text: "Slow down and observe their interaction.", flag: "alexRelationship", value: "observe", nextPart: "P4" },
-            { text: "Offer a sharp, confrontational greeting.", flag: "alexRelationship", value: "confront", nextPart: "P4" }
+            { text: "Continue", nextPart: "P2-1" }
         ]
     },
-    "P4": {
-        narrative: "[P4: Business Class] The lecture is underway. What is your role in the discussion?",
+    "P2-1": {
+        narrative: "You arrived at the old office building, your breath ragged and your palms damp with anxiety. The internal thought was a high-pitched, panicked mantra: Do not engage. They will see the difference. You were supposed to check in with your manager, Alex, but the thought of facing a known quantity with this unknown body was paralyzing. You could imagine his familiar, cold irritation—a feeling so strong you practically felt it through the heavy wood of the office door. The air around the door felt thick, charged with the judgment you knew would come if you stepped inside. Every second spent there felt like a risk, demanding a hasty, anonymous retreat before the true confrontation could begin.",
+        imageUrl: "ASSET_P2_OFFICE_DOOR",
         choices: [
-            { text: "Stay quiet and just take notes.", flag: "participation", value: "quiet", nextPart: "P5" },
-            { text: "Listen intently, analyzing every point.", flag: "participation", value: "analytical", nextPart: "P5" },
-            { text: "Be vocal, challenging the professor's ideas.", flag: "participation", value: "vocal", nextPart: "P5" }
+            { text: "[Cautious] Slip the folder under the door and leave a quick text explaining I had to rush to class.", mindset: "cautious", flag: "alexRelationship", value: "hostile", nextPart: "P2-2" },
+            { text: "[Curious] Watch Alex from a distance, observing his behavior before deciding to interact." },
+            { text: "[Bold] Walk in, make direct eye contact, and initiate a conversation." }
         ]
     },
-    "P5": {
-        narrative: "[P5: Wrestling Practice] The gym is hot, the atmosphere intense. You're paired with a stronger opponent. How do you react to their physical dominance?",
-        emotion: "curious",
+    "P2-2": {
+        narrative: "You rushed across campus, carrying the new weight of social failure from the office. When you finally reached the Business School, you fumbled with the heavy lecture hall door. The brightly lit, sterile hall was entirely silent as you stepped inside. Dr. Thorne, the professor, paused his dense lecture on supply chains mid-sentence. The silence was immediate, cutting, and absolute. Seventy pairs of eyes, all focused intently on you, amplified the feeling of raw, unwelcome exposure. You could feel the protective shape of your sweater doing nothing to deflect the attention. The air felt heavy, waiting for the inevitable reprimand.",
+        imageUrl: "ASSET_P2_LECTURE_HALL_ENTRANCE",
         choices: [
-            { text: "(Cautious) Yield, feeling the humiliation of the pin.", mindset: "cautious", flag: "practiceControl", value: "humiliated", nextPart: "P6" },
-            { text: "(Curious) Analyze their technique, even in defeat.", mindset: "curious", flag: "practiceControl", value: "analyzed", nextPart: "P6" },
-            { text: "(Bold) Use leverage and grit to turn the tables, dominating them.", mindset: "bold", flag: "practiceControl", value: "dominant", nextPart: "P6" }
+            { text: "[Continue] Face the professor.", nextPart: "P2-3" }
         ]
     },
-    "P6": {
-        narrative: "[P6: Confession & Prep] The night looms. You're meeting Mitch at the bar. He confessed feelings for you recently. How do you prepare?",
+    "P2-3": {
+        narrative: "\"Lily,\" Dr. Thorne stated flatly, his voice amplified and booming through the mic. \"You're late. Again.\" He paused, letting the full weight of the class's collective attention settle on your shoulders. \"Your grades are slipping, your participation is non-existent, and frankly, I expect better from someone in your position.\" You finally found your seat, sinking low, desperate to melt into the uncomfortable plastic. The weight of his words and the collective gaze amplified the feeling of profound social incompetence. You knew you should participate to mitigate the damage, but the sound of your own voice in this new register, the risk of saying something wrong, was utterly paralyzing.",
+        imageUrl: "ASSET_P2_LECTURE_HALL",
         choices: [
-            { text: "Pick something from your closet. Keep it friendly.", flag: "mitchBond", value: "friend", nextPart: "P7" },
-            { text: "Go shopping. Buy something ambiguous, something that sends a blurry signal.", flag: "mitchBond", value: "blurry", nextPart: "P7" },
-            { text: "Call him. Suggest you're both looking for an intimate victory tonight.", flag: "mitchBond", value: "intimate", nextPart: "P7" }
+            { text: "[Cautious] Keep my head down, pretend to be taking notes, and avoid all eye contact.", mindset: "cautious", nextPart: "P3-1" },
+            { text: "[Curious] Write a complex question on a note card and pass it to the professor without speaking." },
+            { text: "[Bold] Raise my hand immediately and aggressively challenge the professor on a minor point." }
         ]
     },
-    "P7": {
-        narrative: "[P7: The Bar] The noise, the lights, the people. It's the climax of the day.",
+    "P3-1": {
+        narrative: "The wrestling gym was a raw, physical assault on the senses. The air was thick and humid, filled with the sharp scent of rubber matting, disinfectant, and overwhelming sweat. The soundscape was dominated by grunts, sharp breaths, and the loud rhythmic slap of bodies hitting the floor. The sight of the large, muscular forms moving with violent, controlled purpose was terrifying—you felt clumsy and infinitely small. You stood near the entrance, frozen, utterly out of place, watching the choreography of aggression unfold.",
+        imageUrl: "ASSET_P3_WRESTLING_MAT_OVERVIEW",
         choices: [
-            { text: "Focus on Mitch. He needs your support.", flag: "conflictWinner", value: "mitch", nextPart: "END" },
-            { text: "Your eyes meet a compelling stranger across the room. Invite them over.", flag: "conflictWinner", value: "stranger", nextPart: "END" }
+            { text: "[Continue] Proceed to the mat area.", nextPart: "P3-2" }
+        ]
+    },
+    "P3-2": {
+        narrative: "Coach spotted you. His face, weathered and stern, hardened into an expression of impatience. His instructions were a sharp, demanding bark: \"LILY! Get changed! You're burning daylight!\" He didn't ask; he commanded. He pointed an aggressive finger toward the doorway leading to the hostile environment of the men's locker room. Every shred of anxiety you had managed to contain since class instantly re-emerged. You had to obey, forcing you to confront the intimate setting you most feared.",
+        imageUrl: "ASSET_P3_COACH",
+        choices: [
+            { text: "[Continue] Enter the locker room.", nextPart: "P3-3" }
+        ]
+    },
+    "P3-3": {
+        narrative: "Inside, the air was heavy, hot, and thick with steam from the showers. The casual nudity, the easy confidence, and the loud, relaxed chatter of the teammates was a shocking, unbearable contrast to your internal panic. You located your locker. The singlet, thin and brutally exposing, felt like a joke. Your only thought was a single, desperate word: escape. You needed to get out of the clothes you were in and into the uniform with minimal social notice.",
+        imageUrl: "ASSET_P3_LOCKER_ROOM",
+        choices: [
+            { text: "[Cautious] Face the back of the locker, change quickly, shaking slightly, body hidden from view.", mindset: "cautious", nextPart: "P3-4" },
+            { text: "[Curious] Change quickly, but clinically scan the room, gathering data on the others." },
+            { text: "[Bold] Change openly, meeting teammates' eyes to assert presence." }
+        ]
+    },
+    "P3-4": {
+        narrative: "You rushed onto the mat, heart pounding, determined to endure the physical drill. The singlet felt like a flag of surrender. You were immediately clumsy, weak, and uncoordinated in the aggressive stance. Coach shouted a drill instruction, and the physical punishment began. The first few partners were a blur of quick, efficient takedowns, leaving your body aching and your mind spiraling in shame over your lack of physical control.",
+        imageUrl: "ASSET_P3_GRAPPLE_START",
+        choices: [
+            { text: "[Continue] Prepare for the next partner.", nextPart: "P3-5" }
+        ]
+    },
+    "P3-5": {
+        narrative: "Then came Ben. He was focused, strong, and when he executed the cradle hold, it was sudden, pinning you with intimate, overwhelming pressure. His weight pressed you into the mat; his thigh was a solid barrier. Then came the intrusion: his hand came too high, his thumb brushing your inner thigh. The \"flutter\" was confusing, terrifying, and deeply intrusive—a feeling you couldn't process, only reject. You couldn't process the sudden chemical spike; you could only process the searing shame of the physical exposure and the violation of your boundaries.",
+        imageUrl: "ASSET_P3_GRAPPLE_CLOSE",
+        choices: [
+            { text: "[Cautious] Shyly try to pull his hand away, resisting the intrusive pressure.", mindset: "cautious", flag: "practiceControl", value: "humiliated", nextPart: "P4-1" },
+            { text: "[Curious] Freeze, analyzing the chemical and hormonal \"flutter.\"" },
+            { text: "[Bold] Lean into the touch, \"allowing\" it to assert control over the sensation." }
+        ]
+    },
+    "P4-1": {
+        narrative: "The shame of the wrestling mat clung to you like stale sweat, heavy and inescapable. You met Mitch outside, near his car. He didn't need to ask what was wrong. He saw your drawn face and the profound emotional agony reflected in your eyes. \"You look like you need two things, not one,\" he murmured, his voice gentle and low, a sudden anchor in the storm. \"You need a drink... and clothes.\" His simple offer of non-judgmental comfort cracked the armor of your self-repression. You needed privacy, refuge, and above all, to hide from any further confrontation.",
+        imageUrl: "ASSET_P4_MITCH_CAR",
+        choices: [
+            { text: "[Cautious] Rummage the Closet: Seek privacy and safety in familiar surroundings.", flag: "gettingReadyChoice", value: "closet", nextPart: "P4-2" },
+            { text: "[Bold] Go Shopping: Force public exposure and new confrontations." }
+        ]
+    },
+    "P4-2": {
+        narrative: "Inside the apartment, you retreated instantly to the dark, small confines of the closet. The clothes were overwhelming—too many colors, too many fabrics, too many reminders of the person you were forced to inhabit. The thought of putting on anything bold or new felt like forcing a painful lie. Mitch stayed in the living room, quiet and understanding, sensing your desperate need for isolation. You prioritized blending in over confronting your new reality, needing camouflage above all else.",
+        imageUrl: "ASSET_P4_CLOSET",
+        choices: [
+            { text: "[Cautious] Choose oversized, loose-fitting clothes to hide the body entirely.", mindset: "cautious", nextPart: "P4-3" },
+            { text: "[Curious] Select something slightly provocative but entirely analytical—a test case." },
+            { text: "[Bold] Choose a dramatically revealing, defiant outfit." }
+        ]
+    },
+    "P4-3": {
+        narrative: "You emerged in a large, shapeless, charcoal-gray dress that was utterly forgettable and entirely protective. It was the color of shadows, a refusal to be seen. Mitch smiled kindly and offered only platonic support, recognizing your need for safety above style. \"You look great, Lily. Ready to go?\" The tension was entirely absent, replaced by quiet, loyal camaraderie. Your connection was now defined by comfort, refuge, and non-confrontation—a safe harbor from the turbulent day.",
+        imageUrl: "ASSET_P4_COAT_FINAL",
+        choices: [
+            { text: "[Continue] Head to the bar.", flag: "mitchBond", value: "friend", nextPart: "P5-1" }
+        ]
+    },
+    "P5-1": {
+        narrative: "The bar was loud, dark, and crowded, but nestled in a quiet booth with Mitch, it felt safe. You had achieved a fragile shield. You and Mitch arrived as platonic friends, your connection a solid barrier against the chaos of the night. Mitch talked easily about his week, his presence a comforting anchor, drawing the attention away from you. You focused on the steady, familiar rhythm of his voice, letting it wash over you, desperately trying to ignore the lingering, shaming sensation of the humiliating pin. The evening was becoming an exhausting act of holding your breath.",
+        imageUrl: "ASSET_P5_BAR_SAFE",
+        choices: [
+            { text: "[Cautious] Hunch low, seek shelter behind Mitch, and quietly ask to leave.", mindset: "cautious", flag: "finalBond", value: "sanctuary", nextPart: "P5-2" },
+            { text: "[Curious] Stay late, observing the other patrons, analyzing their social dynamics." },
+            { text: "[Bold] Initiate a conversation with a nearby stranger, pushing a social boundary." }
+        ]
+    },
+    "P5-2": {
+        narrative: "The need to escape became physically painful. You pulled your sweater tighter, the protective shield feeling necessary and insufficient all at once, and nudged Mitch's arm. \"Can we go home? Please?\" The word 'home' felt safe and distant, the only true refuge left. Mitch immediately agreed, his expression one of immediate concern, recognizing your profound need for safety. You had survived the day without confronting your identity, taking a single psychological risk, or pushing a single boundary. The bond with Mitch was now one of sanctuary—a safe harbor built entirely on your vulnerability and his protection.",
+        imageUrl: "ASSET_P5_EXIT_NIGHT",
+        choices: [
+            { text: "[End Game] Final State: Sanctuary achieved.", nextPart: "END" }
         ]
     }
 };
@@ -305,14 +377,13 @@ let gameState = {
 
     // Narrative Timeline Flags
     currentPart: "P1",
-    commuteMethod: null,      // Set in P2: "bike", "bus", or "walk"
-    alexRelationship: null,   // Set in P3: "avoid", "observe", or "confront"
-    isLateForClass: false,    // Set based on P2 choice ("walk" makes it true)
-    participation: null,      // Set in P4: "quiet", "analytical", or "vocal"
-    practiceControl: null,    // Set in P5: "humiliated", "analyzed", or "dominant"
-    mitchBond: null,          // Set in P6: "friend", "blurry", or "intimate"
-    conflictWinner: null,     // Set in P7: "mitch" or "stranger"
-    finalBond: null           // Set in P7: e.g., "guiltyDuty", "sanctuary"
+    commuteMethod: null,
+    isLateForClass: false,
+    alexRelationship: null,
+    practiceControl: null,
+    gettingReadyChoice: null,
+    mitchBond: null,
+    finalBond: null
 };
 
 // --- DOM Element References ---
@@ -828,13 +899,15 @@ function handleNarrativeChoice(choice) {
         }
     }
 
-    // Special logic for P2 commute outcomes
-    if (gameState.currentPart === "P2" && flag === "commuteMethod") {
-        gameState.isLateForClass = (value === "walk");
+    // Special logic for commute outcomes
+    if (flag === "commuteMethod" && value === "walk") {
+        gameState.isLateForClass = true;
     }
 
-    // Advance to the next part of the story
-    renderNarrativeScene(nextPart);
+    // Advance to the next part of the story, if one is defined
+    if (nextPart) {
+        renderNarrativeScene(nextPart);
+    }
 }
 
 /**
@@ -886,7 +959,8 @@ function renderNarrativeScene(partId) {
     const part = narrativeTimeline[partId];
 
     if (partId === "END") {
-        narrativeContainer.innerHTML = `<p class="mb-4">The story concludes for now.</p>`;
+        const finalStats = `FINAL_STATS: Cautious (${gameState.mindset_cautious}) / Curious (${gameState.mindset_curious}) / Bold (${gameState.mindset_bold})`;
+        narrativeContainer.innerHTML = `<p class="mb-4">The story concludes for now. ${finalStats}</p>`;
         choicesContainer.innerHTML = ''; // Clear choices
 
         // --- V3 UI FIX: Show the main menu again ---
@@ -901,7 +975,7 @@ function renderNarrativeScene(partId) {
         restartButton.className = "choice-button w-full p-3 bg-indigo-500 rounded-lg text-left text-white hover:bg-indigo-600";
         restartButton.onclick = () => {
             // This could reset the narrative flags and go back to P1 or the wardrobe
-            renderWardrobeStep("top");
+            location.reload(); // Simple reload for now
         };
         choicesContainer.appendChild(restartButton);
         return;
@@ -946,17 +1020,15 @@ function renderNarrativeScene(partId) {
     part.choices.forEach((choice, index) => {
         const button = document.createElement('button');
         button.textContent = choice.text;
-        button.className = "choice-button w-full p-3 bg-gray-700 rounded-lg text-left text-indigo-300 hover:bg-indigo-600 hover:text-white transform opacity-0 translate-y-2";
-        button.onclick = () => handleNarrativeChoice(choice);
 
-        // --- V3 UI Logic: Stat-based choice availability ---
-        // For now, we'll make all choices available and apply the visual effect.
-        // In the future, a stat check would go here.
-        // Example: if (choice.mindset && gameState[`mindset_${choice.mindset}`] >= 5) {
-        if (true) { // Placeholder for stat check
+        if (choice.nextPart) {
+            button.className = "choice-button w-full p-3 bg-gray-700 rounded-lg text-left text-indigo-300 hover:bg-indigo-600 hover:text-white transform opacity-0 translate-y-2";
+            button.onclick = () => handleNarrativeChoice(choice);
             button.classList.add('available-choice');
+        } else {
+            button.className = "choice-button w-full p-3 bg-gray-800 rounded-lg text-left text-gray-500 cursor-not-allowed transform opacity-0 translate-y-2";
+            button.disabled = true;
         }
-        // } else { button.disabled = true; button.classList.add('cursor-not-allowed', 'text-gray-500'); }
 
         choicesContainer.appendChild(button);
 
