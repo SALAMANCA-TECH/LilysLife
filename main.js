@@ -207,6 +207,8 @@ const storyData = {
     }
 };
 
+const DEFAULT_SCENE_IMAGE_URL = "https://preview.redd.it/what-do-yall-think-new-logo-time-v0-8zmlko0klrzf1.jpeg?width=640&crop=smart&auto=webp&s=b37e388430fce2ecd91ae19c637dc7df9930ca58";
+
 const narrativeTimeline = {
     "P1": {
         narrative: "The morning light filters through the blinds, painting stripes across the room. It's a new day, another chance to define who you are. The reflection in the mirror is still a stranger, a puzzle you're slowly piecing together. The first choice of the day is always the hardest: how to face the world waiting outside.",
@@ -226,10 +228,12 @@ const narrativeTimeline = {
             { text: "[Bold] Ride your bike. It's fast, risky, and gets the adrenaline pumping.", flag: "commuteMethod", value: "bike", nextPart: "P1-2" }
         ]
     },
-    "P1-2": {
         narrative: "The choice was made: the path of least resistance was slow, quiet isolation. You pulled the thick, charcoal comfy sweater low, the soft fabric a desperate attempt to shield the jarring exposure of the black mini skirt from the world. The journey, usually a brisk fifteen minutes, stretched into forty-five minutes of agonizing, oppressive self-consciousness. Every engine roar, every car that idled at the curb, every glance from a pedestrian felt like a deliberate, hostile inspection of your unfamiliar form. You kept your gaze fixed on the pavement, counting cracks, feeling the heavy, unfamiliar muscle memory of your body resist the urge to run. The internal monologue was a frantic, low whisper: Don’t look. Don’t draw attention. Just endure this punishment. The world felt too loud, too bright, and impossibly heavy. The emotional price of this deliberate retreat was a mandated delay.",
         imageUrl: "ASSET_P1_COMMUTE_WALK",
-        // This scene sets the isLateForClass flag internally
+    "P3": {
+        narrative: "[P3: The Work Drop] You pass by Alex's office. They're a minor rival, a social obstacle.",
+        imageUrl: "https://placehold.co/600x400/3a3a3a/ffffff?text=Alex's+Office",
+        emotion: "curious",
         choices: [
             { text: "Continue", nextPart: "P2-1" }
         ]
@@ -962,6 +966,11 @@ function renderNarrativeScene(partId) {
     gameState.currentPart = partId;
     updateCharacterImage(); // Update the character's portrait
     const part = narrativeTimeline[partId];
+
+    // Update the scene image, falling back to the default if not specified
+    if (sceneImage) {
+        sceneImage.src = part?.imageUrl || DEFAULT_SCENE_IMAGE_URL;
+    }
 
     if (partId === "END") {
         const finalStats = `FINAL_STATS: Cautious (${gameState.mindset_cautious}) / Curious (${gameState.mindset_curious}) / Bold (${gameState.mindset_bold})`;
