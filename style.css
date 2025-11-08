@@ -99,3 +99,13 @@ body {
     box-shadow: 0 4px #888;
     transform: translateY(0);
 }
+
+#narrative-container {
+    background: linear-gradient(135deg, #6a0dad, #dda0dd, #e6e6fa);
+    border-radius: 12px;
+    border: 2px solid white;
+    box-shadow: 0 0 15px #fff, 0 0 20px #ff00de;
+    padding: 20px;
+    color: white;
+    min-height: 150px;
+}
