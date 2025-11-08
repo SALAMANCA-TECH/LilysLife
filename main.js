@@ -207,9 +207,12 @@ const storyData = {
     }
 };
 
+const DEFAULT_SCENE_IMAGE_URL = "https://preview.redd.it/what-do-yall-think-new-logo-time-v0-8zmlko0klrzf1.jpeg?width=640&crop=smart&auto=webp&s=b37e388430fce2ecd91ae19c637dc7df9930ca58";
+
 const narrativeTimeline = {
     "P1": {
         narrative: "[P1: The Awakening] The morning light filters through the blinds. Another day. How will you face it?",
+        imageUrl: "https://placehold.co/600x400/1a1a1a/ffffff?text=Bedroom",
         choices: [
             { text: "With caution. Keep your head down.", mindset: "cautious", nextPart: "P2" },
             { text: "With curiosity. See what happens.", mindset: "curious", nextPart: "P2" },
@@ -218,6 +221,7 @@ const narrativeTimeline = {
     },
     "P2": {
         narrative: "[P2: The Commute] Time to get to the university. How will you travel?",
+        imageUrl: "https://placehold.co/600x400/2a2a2a/ffffff?text=On+The+Way",
         choices: [
             { text: "Take the bus. It's crowded, but efficient.", flag: "commuteMethod", value: "bus", nextPart: "P3" },
             { text: "Ride your bike. It's risky, but freeing.", flag: "commuteMethod", value: "bike", nextPart: "P3" },
@@ -226,6 +230,7 @@ const narrativeTimeline = {
     },
     "P3": {
         narrative: "[P3: The Work Drop] You pass by Alex's office. They're a minor rival, a social obstacle.",
+        imageUrl: "https://placehold.co/600x400/3a3a3a/ffffff?text=Alex's+Office",
         emotion: "curious",
         choices: [
             { text: "Avoid eye contact and hurry past.", flag: "alexRelationship", value: "avoid", nextPart: "P4" },
@@ -235,6 +240,7 @@ const narrativeTimeline = {
     },
     "P4": {
         narrative: "[P4: Business Class] The lecture is underway. What is your role in the discussion?",
+        imageUrl: "https://placehold.co/600x400/4a4a4a/ffffff?text=Classroom",
         choices: [
             { text: "Stay quiet and just take notes.", flag: "participation", value: "quiet", nextPart: "P5" },
             { text: "Listen intently, analyzing every point.", flag: "participation", value: "analytical", nextPart: "P5" },
@@ -243,6 +249,7 @@ const narrativeTimeline = {
     },
     "P5": {
         narrative: "[P5: Wrestling Practice] The gym is hot, the atmosphere intense. You're paired with a stronger opponent. How do you react to their physical dominance?",
+        imageUrl: "https://placehold.co/600x400/5a5a5a/ffffff?text=Gym",
         emotion: "curious",
         choices: [
             { text: "(Cautious) Yield, feeling the humiliation of the pin.", mindset: "cautious", flag: "practiceControl", value: "humiliated", nextPart: "P6" },
@@ -252,6 +259,7 @@ const narrativeTimeline = {
     },
     "P6": {
         narrative: "[P6: Confession & Prep] The night looms. You're meeting Mitch at the bar. He confessed feelings for you recently. How do you prepare?",
+        imageUrl: "https://placehold.co/600x400/6a6a6a/ffffff?text=Getting+Ready",
         choices: [
             { text: "Pick something from your closet. Keep it friendly.", flag: "mitchBond", value: "friend", nextPart: "P7" },
             { text: "Go shopping. Buy something ambiguous, something that sends a blurry signal.", flag: "mitchBond", value: "blurry", nextPart: "P7" },
@@ -260,6 +268,7 @@ const narrativeTimeline = {
     },
     "P7": {
         narrative: "[P7: The Bar] The noise, the lights, the people. It's the climax of the day.",
+        imageUrl: "https://placehold.co/600x400/7a7a7a/ffffff?text=The+Bar",
         choices: [
             { text: "Focus on Mitch. He needs your support.", flag: "conflictWinner", value: "mitch", nextPart: "END" },
             { text: "Your eyes meet a compelling stranger across the room. Invite them over.", flag: "conflictWinner", value: "stranger", nextPart: "END" }
@@ -884,6 +893,11 @@ function renderNarrativeScene(partId) {
     gameState.currentPart = partId;
     updateCharacterImage(); // Update the character's portrait
     const part = narrativeTimeline[partId];
+
+    // Update the scene image, falling back to the default if not specified
+    if (sceneImage) {
+        sceneImage.src = part?.imageUrl || DEFAULT_SCENE_IMAGE_URL;
+    }
 
     if (partId === "END") {
         narrativeContainer.innerHTML = `<p class="mb-4">The story concludes for now.</p>`;
