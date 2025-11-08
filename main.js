@@ -7,6 +7,16 @@ import configApiKey from './config.js';
 // --- V2.0 DATABASE DEFINITIONS ---
 
 // A constant array listing all 21 attributes.
+const characterImageDatabase = {
+    "base": {
+        "neutral": "https://preview.redd.it/starter-outfit-started-poses-v0-nt3w0wjfhxzf1.jpg?width=320&crop=smart&auto=webp&s=0aaa6da78484c4762040417ea29f63aaef61fed0",
+        "curious": "https://preview.redd.it/starter-outfit-started-poses-v0-erop40w9hxzf1.jpg?width=320&crop=smart&auto=webp&s=30ff4c78700f7716ce4034529e4ac49aae98fac4"
+    },
+    "sweater+skirt": {
+        "neutral": "https://preview.redd.it/starter-outfit-started-poses-v0-xigp5rlkixzf1.jpg?width=320&crop=smart&auto=webp&s=bba1b6ad44351db78abb37a00e363f6355a946d5",
+        "curious": "https://preview.redd.it/starter-outfit-started-poses-v0-ebk3sh8bhxzf1.jpg?width=320&crop=smart&auto=webp&s=af6b82081106c6a871c7bd4f556a4f3ff01c4beb"
+    }
+};
 const ALL_STATS = [
     // Mindset
     'cautious', 'curious', 'bold',
@@ -97,6 +107,11 @@ const clothingDatabase = {
             name: "Tight Blue Jeans",
             stats: { alluring: 2, expressive: -1, bold: 1, insecure: 1, clumsy: 1 },
             imageUrl: "https://preview.redd.it/new-clothes-im-going-to-stop-soon-and-buckle-down-on-the-v0-y84gfvs76tzf1.jpg?width=320&crop=smart&auto=webp&s=7e53684b4209fc4abe92b083b79961778fe3548a"
+        },
+        "skirt": {
+            name: "Plaid Skirt",
+            stats: { creative: 2, alluring: 1, reserved: -1 },
+            imageUrl: "https://placehold.co/320x427/ffffff/333333?text=Skirt"
         },
         "trousers": {
             name: "Loose Linen Trousers",
@@ -211,6 +226,7 @@ const narrativeTimeline = {
     },
     "P3": {
         narrative: "[P3: The Work Drop] You pass by Alex's office. They're a minor rival, a social obstacle.",
+        emotion: "curious",
         choices: [
             { text: "Avoid eye contact and hurry past.", flag: "alexRelationship", value: "avoid", nextPart: "P4" },
             { text: "Slow down and observe their interaction.", flag: "alexRelationship", value: "observe", nextPart: "P4" },
@@ -227,6 +243,7 @@ const narrativeTimeline = {
     },
     "P5": {
         narrative: "[P5: Wrestling Practice] The gym is hot, the atmosphere intense. You're paired with a stronger opponent. How do you react to their physical dominance?",
+        emotion: "curious",
         choices: [
             { text: "(Cautious) Yield, feeling the humiliation of the pin.", mindset: "cautious", flag: "practiceControl", value: "humiliated", nextPart: "P6" },
             { text: "(Curious) Analyze their technique, even in defeat.", mindset: "curious", flag: "practiceControl", value: "analyzed", nextPart: "P6" },
@@ -315,7 +332,7 @@ const wardrobeData = {
     "bottom": {
         narrative: "What will Lily wear on the bottom?",
         choices: [
-            { text: "Tight Blue Jeans", key: "jeans", category: "outfit_bottom", nextStep: "shoes", functional: true },
+            { text: "Plaid Skirt", key: "skirt", category: "outfit_bottom", nextStep: "shoes", functional: true },
             { text: "Loose Linen Trousers", key: "trousers", category: "outfit_bottom", nextStep: "shoes", functional: false }
         ]
     },
@@ -406,6 +423,59 @@ function updateMeters() {
         meterBarBold.style.width = `${boldPercent}%`;
     }
 }
+
+/**
+ * Updates the character image based on the current outfit and narrative emotion.
+ */
+function updateCharacterImage() {
+    // Query the DOM for the element each time to avoid stale references.
+    const characterImageEl = document.getElementById('character-image');
+    if (!characterImageEl) {
+        console.error("Could not find the 'character-image' element.");
+        return;
+    }
+
+    const part = narrativeTimeline[gameState.currentPart];
+    const emotion = part?.emotion || "neutral"; // Default to neutral if no emotion is specified
+
+    let outfitKey = "base"; // Default to the base nude model
+
+    // Create an outfit key if a top and bottom are equipped
+    const top = gameState.equipped.outfit_top;
+    const bottom = gameState.equipped.outfit_bottom;
+    if (top && bottom) {
+        outfitKey = `${top}+${bottom}`;
+    }
+    // TODO: Add logic for 'outfit_all' (dresses) if needed.
+
+    // --- Image URL Lookup with Fallbacks ---
+    let imageUrl = characterImageDatabase.base.neutral; // Ultimate fallback
+
+    const outfitImages = characterImageDatabase[outfitKey];
+    const baseImages = characterImageDatabase.base;
+
+    if (outfitImages) {
+        // 1. Try to find the specific emotion for the outfit
+        if (outfitImages[emotion]) {
+            imageUrl = outfitImages[emotion];
+        }
+        // 2. Fallback to the neutral version of the outfit
+        else if (outfitImages.neutral) {
+            imageUrl = outfitImages.neutral;
+        }
+    } else {
+        // 3. If outfit not found, fallback to the base model for the specific emotion
+        if (baseImages[emotion]) {
+            imageUrl = baseImages[emotion];
+        }
+        // 4. The final fallback is the neutral base model (already set)
+    }
+
+    // Update the image on the screen
+    characterImageEl.src = imageUrl;
+    console.log(`Updating character image. Emotion: ${emotion}, Outfit: ${outfitKey}, URL: ${imageUrl}`);
+}
+
 
 /**
  * Toggles the loading overlay.
@@ -801,10 +871,10 @@ async function renderScene(sceneId) {
         }, 100 * (index + 1));
     });
 
-    // (AI TASK 1) Trigger image generation only on the final scene
-    if (sceneId === 'S1_END') {
-        await generateCharacterImage();
-    }
+    // The old image generation is no longer needed.
+    // if (sceneId === 'S1_END') {
+    //     await generateCharacterImage();
+    // }
 }
 
 /**
@@ -812,11 +882,19 @@ async function renderScene(sceneId) {
  */
 function renderNarrativeScene(partId) {
     gameState.currentPart = partId;
+    updateCharacterImage(); // Update the character's portrait
     const part = narrativeTimeline[partId];
 
     if (partId === "END") {
         narrativeContainer.innerHTML = `<p class="mb-4">The story concludes for now.</p>`;
         choicesContainer.innerHTML = ''; // Clear choices
+
+        // --- V3 UI FIX: Show the main menu again ---
+        const mainMenuContainer = document.getElementById('main-menu-container');
+        if (mainMenuContainer) {
+            mainMenuContainer.classList.remove('hidden');
+        }
+
         // Optionally, add a button to restart the narrative
         const restartButton = document.createElement('button');
         restartButton.textContent = "Start Over";
@@ -957,35 +1035,18 @@ document.addEventListener('DOMContentLoaded', () => {
     loadButton = document.getElementById('load-button');
     beginButton = document.getElementById('begin-button');
     continueButton = document.getElementById('continue-button');
-
-
-    // Add event listeners
-    saveButton.onclick = saveGame;
-    loadButton.onclick = loadGame;
-    beginButton.onclick = () => {
-        renderScene(gameState.currentScene);
-        beginButton.classList.add('hidden');
-        continueButton.classList.remove('hidden');
-    };
-    continueButton.onclick = () => {
-        // This assumes the AI's response will trigger the next scene or choices.
-        // If not, you'll need to add logic here to advance the scene.
-        generateNarrative(gameState.currentScene);
-    };
-
     wardrobeButton = document.getElementById('wardrobe-button');
+    const mainMenuContainer = document.getElementById('main-menu-container');
 
     // Add event listeners
     saveButton.onclick = saveGame;
     loadButton.onclick = loadGame;
     beginButton.onclick = () => {
-        renderScene(gameState.currentScene);
-        beginButton.classList.add('hidden');
-        continueButton.classList.remove('hidden');
+        mainMenuContainer.classList.add('hidden');
+        // V3 FIX: Start the new narrative timeline instead of the old scene system.
+        renderNarrativeScene("P1");
     };
     continueButton.onclick = () => {
-        // This assumes the AI's response will trigger the next scene or choices.
-        // If not, you'll need to add logic here to advance the scene.
         generateNarrative(gameState.currentScene);
     };
     wardrobeButton.onclick = () => {
@@ -993,11 +1054,11 @@ document.addEventListener('DOMContentLoaded', () => {
         ALL_STATS.forEach(stat => newStats[stat] = 0);
         gameState.stats = newStats;
         updateMeters();
+        mainMenuContainer.classList.add('hidden');
         renderWardrobeStep("top");
     };
 
     // Start the game by initializing Firebase
-    // This will, in turn, call renderScene
     initializeFirebase();
 });
 
