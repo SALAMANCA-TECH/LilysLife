@@ -223,8 +223,8 @@ const narrativeTimeline = {
         narrative: "[P2: The Commute] Time to get to the university. How will you travel?",
         imageUrl: "https://placehold.co/600x400/2a2a2a/ffffff?text=On+The+Way",
         choices: [
-            { text: "Take the bus. It's crowded, but efficient.", flag: "commuteMethod", value: "bus" },
-            { text: "Ride your bike. It's risky, but freeing.", flag: "commuteMethod", value: "bike" },
+            { text: "Take the bus. It's crowded, but efficient.", flag: "commuteMethod", value: "bus", nextPart: "P1-2" },
+            { text: "Ride your bike. It's risky, but freeing.", flag: "commuteMethod", value: "bike", nextPart: "P1-2" },
             { text: "Walk. It's slow, but gives you time to think.", flag: "commuteMethod", value: "walk", nextPart: "P1-2" }
         ]
     },
@@ -388,7 +388,8 @@ let gameState = {
     practiceControl: null,
     gettingReadyChoice: null,
     mitchBond: null,
-    finalBond: null
+    finalBond: null,
+    stateHistory: []
 };
 
 // --- DOM Element References ---
@@ -890,6 +891,9 @@ function handleChoice(choice) {
 function handleNarrativeChoice(choice) {
     const { flag, value, nextPart, mindset } = choice;
 
+    // Save a deep copy of the current state to the history
+    gameState.stateHistory.push(JSON.parse(JSON.stringify(gameState)));
+
     // Update the gameState with the new flag
     if (flag) {
         gameState[flag] = value;
@@ -1047,6 +1051,34 @@ function renderNarrativeScene(partId) {
             button.classList.remove('opacity-0', 'translate-y-2');
         }, 100 * (index + 1));
     });
+
+    // Add a "Back" button if there's history
+    if (gameState.stateHistory.length > 0) {
+        const backButton = document.createElement('button');
+        backButton.textContent = "Back";
+        backButton.className = "choice-button w-full p-3 bg-gray-600 rounded-lg text-left text-white hover:bg-gray-700 mt-4";
+        backButton.onclick = () => goBack();
+        choicesContainer.appendChild(backButton);
+    }
+}
+
+/**
+ * Reverts the game to the previous state.
+ */
+function goBack() {
+    if (gameState.stateHistory.length > 0) {
+        // Pop the last state from the history
+        const previousState = gameState.stateHistory.pop();
+
+        // Restore the entire game state
+        gameState = previousState;
+
+        // Re-render the scene with the restored state
+        console.log("Reverting to previous state:", gameState);
+        renderNarrativeScene(gameState.currentPart);
+    } else {
+        console.warn("No history to go back to.");
+    }
 }
 
 
