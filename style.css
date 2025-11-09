@@ -109,3 +109,15 @@ body {
     color: white;
     min-height: 150px;
 }
+
+#watermark {
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
+    opacity: 0.42;
+    pointer-events: none;
+    font-size: 14px;
+    color: white;
+    z-index: 100;
+    text-shadow: 0 0 3px #ff00de, 0 0 5px #ff00de;
+}
