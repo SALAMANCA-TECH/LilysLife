@@ -100,21 +100,17 @@ body {
     transform: translateY(0);
 }
 
-#narrative-container {
-    background: linear-gradient(135deg, #6a0dad, #dda0dd, #e6e6fa);
+#narrative-container, #stats-container {
+    background: linear-gradient(135deg, #F8F0F8, #FFF0F5); /* Light lavender to lavender blush */
     border-radius: 12px;
     border: 2px solid white;
-    box-shadow: 0 0 15px #fff, 0 0 20px #ff00de;
+    box-shadow: 0 0 10px #fff, 0 0 15px #ffc0cb; /* Softer pink glow */
     padding: 20px;
-    color: white;
-    min-height: 150px;
+    color: #4a2c5a; /* Dark purple text for readability */
 }
-/* Stats Container */
-#stats-container {
-    background-color: rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    padding: 16px;
-    border: 2px solid rgba(255, 255, 255, 0.2);
+
+#narrative-container {
+    min-height: 150px;
 }
 
 /* General Vine Track */
@@ -218,16 +214,8 @@ body {
     transform: scale(0.5);
 }
 
-/* Show flower when vine is more than 10% full */
-.vine[style*="width: 1"]:not([style*="width: 0%"])::before,
-.vine[style*="width: 2"]:not([style*="width: 0%"])::before,
-.vine[style*="width: 3"]:not([style*="width: 0%"])::before,
-.vine[style*="width: 4"]:not([style*="width: 0%"])::before,
-.vine[style*="width: 5"]:not([style*="width: 0%"])::before,
-.vine[style*="width: 6"]:not([style*="width: 0%"])::before,
-.vine[style*="width: 7"]:not([style*="width: 0%"])::before,
-.vine[style*="width: 8"]:not([style*="width: 0%"])::before,
-.vine[style*="width: 9"]:not([style*="width: 0%"])::before,
+/* Show flower when vine has any growth */
+.vine:not([style*="width: 0%"])::before,
 .vine-left:not([style*="width: 0%"])::before,
 .vine-right:not([style*="width: 0%"])::before {
     opacity: 1;
