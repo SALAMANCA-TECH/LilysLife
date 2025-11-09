@@ -109,15 +109,127 @@ body {
     color: white;
     min-height: 150px;
 }
+/* Stats Container */
+#stats-container {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
 
-#watermark {
-    position: fixed;
-    bottom: 10px;
-    left: 10px;
-    opacity: 0.42;
-    pointer-events: none;
-    font-size: 14px;
-    color: white;
-    z-index: 100;
-    text-shadow: 0 0 3px #ff00de, 0 0 5px #ff00de;
+/* General Vine Track */
+.vine-track {
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 15px;
+    height: 12px;
+    position: relative;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.4);
+}
+
+/* Bipolar Vine Meter */
+.stat-meter-bipolar .vine-track {
+    display: flex;
+    align-items: center;
+}
+
+.vine-center {
+    width: 4px;
+    height: 16px;
+    background-color: #fff;
+    border-radius: 2px;
+    box-shadow: 0 0 5px #fff;
+    position: relative;
+    z-index: 2;
+}
+
+.vine-left, .vine-right {
+    height: 100%;
+    transition: width 0.5s ease-in-out;
+    position: relative;
+    border-radius: 15px;
+}
+
+.vine-left {
+    margin-left: auto;
+}
+
+.vine-right {
+    margin-right: auto;
+}
+
+/* Mono (0-100) Vine Meter */
+.vine {
+    height: 100%;
+    width: 0%; /* Start at 0 */
+    border-radius: 15px;
+    transition: width 0.5s ease-in-out;
+    position: relative;
+}
+
+/* Vine Colors */
+#stat-shy { background: linear-gradient(90deg, #a7d1d2, #85c2c4); }
+#stat-bold { background: linear-gradient(90deg, #ff9a9e, #fecfef); }
+#stat-cold { background: linear-gradient(90deg, #89cff0, #a9d6e5); }
+#stat-hot { background: linear-gradient(90deg, #ffb88c, #ff9a8b); }
+#stat-curiosity { background: linear-gradient(90deg, #c3aed6, #b088f9); }
+#stat-blush { background: linear-gradient(90deg, #ffb6c1, #ffa8b8); }
+#stat-danger { background: linear-gradient(90deg, #ff6b6b, #ff4d4d); }
+#stat-male_gaze { background: linear-gradient(90deg, #f7c2e3, #e8a0bf); }
+#stat-defense_barrier { background: linear-gradient(90deg, #a8d8ea, #74bde0); }
+#stat-social_friction { background: linear-gradient(90deg, #fde4a0, #f8d38d); }
+#stat-restriction { background: linear-gradient(90deg, #c1c1c1, #a9a9a9); }
+#stat-unfamiliarity { background: linear-gradient(90deg, #e0b3ff, #c381ff); }
+
+/* Flowering Vine - Leaves & Flowers using pseudo-elements */
+.vine::after, .vine-left::after, .vine-right::after {
+    content: '';
+    position: absolute;
+    top: -5px;
+    right: 5px;
+    width: 8px;
+    height: 8px;
+    background-color: #90ee90; /* lightgreen */
+    border-radius: 50% 0 50% 0;
+    transform: rotate(45deg);
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+}
+
+/* Show leaves when the vine has grown a bit */
+.vine:not([style*="width: 0%"])::after,
+.vine-left:not([style*="width: 0%"])::after,
+.vine-right:not([style*="width: 0%"])::after {
+    opacity: 1;
+}
+
+/* A simple flower at the end */
+.vine::before, .vine-left::before, .vine-right::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    right: -4px;
+    width: 12px;
+    height: 12px;
+    background-color: #ffc0cb; /* pink */
+    border-radius: 50%;
+    box-shadow: 0 0 5px #ff69b4;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+    transform: scale(0.5);
+}
+
+/* Show flower when vine is more than 10% full */
+.vine[style*="width: 1"]:not([style*="width: 0%"])::before,
+.vine[style*="width: 2"]:not([style*="width: 0%"])::before,
+.vine[style*="width: 3"]:not([style*="width: 0%"])::before,
+.vine[style*="width: 4"]:not([style*="width: 0%"])::before,
+.vine[style*="width: 5"]:not([style*="width: 0%"])::before,
+.vine[style*="width: 6"]:not([style*="width: 0%"])::before,
+.vine[style*="width: 7"]:not([style*="width: 0%"])::before,
+.vine[style*="width: 8"]:not([style*="width: 0%"])::before,
+.vine[style*="width: 9"]:not([style*="width: 0%"])::before,
+.vine-left:not([style*="width: 0%"])::before,
+.vine-right:not([style*="width: 0%"])::before {
+    opacity: 1;
+    transform: scale(1);
 }
