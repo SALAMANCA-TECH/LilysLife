@@ -531,9 +531,25 @@ let gameState = {
 
     // --- New V3 Narrative State ---
     // Mindset scores, calculated from clothing at the start.
-    mindset_cautious: 0,
-    mindset_curious: 0,
-    mindset_bold: 0,
+    mindset_cautious: 5,
+    mindset_curious: 5,
+    mindset_bold: 5,
+
+    // Secondary Attributes (Engine Tracking)
+    male_gaze: 20,
+    defense_barrier: 30,
+    social_friction: 40,
+    restriction: 10,
+    unfamiliarity: 60,
+
+    // Additional UI Stats
+    blush: 50,
+    danger: 75,
+
+    // Bipolar placeholder values
+    cold: 2,
+    hot: 8,
+
 
     // Narrative Timeline Flags
     currentPart: "P1",
@@ -637,25 +653,33 @@ function calculateInitialMindsetScores() {
 }
 
 /**
- * Updates the UI meters based on the current gameState.
+ * Updates the "Flowering Vine" stats UI based on the current gameState.
  */
-function updateMeters() {
-    const meterBarCautious = document.getElementById('meter-bar-cautious');
-    const meterBarCurious = document.getElementById('meter-bar-curious');
-    const meterBarBold = document.getElementById('meter-bar-bold');
+function updateStatsUI() {
+    // --- Bipolar Stats ---
+    // Shy/Bold is mapped to cautious vs bold mindset
+    const shyBoldTotal = gameState.mindset_cautious + gameState.mindset_bold;
+    const shyPercent = shyBoldTotal > 0 ? (gameState.mindset_cautious / shyBoldTotal) * 100 : 50;
+    const boldPercent = shyBoldTotal > 0 ? (gameState.mindset_bold / shyBoldTotal) * 100 : 50;
+    document.getElementById('stat-shy').style.width = `${shyPercent}%`;
+    document.getElementById('stat-bold').style.width = `${boldPercent}%`;
 
-    if (meterBarCautious) {
-        const cautiousPercent = Math.max(0, Math.min(100, (gameState.stats.cautious / MAX_STAT_VALUE) * 100));
-        meterBarCautious.style.width = `${cautiousPercent}%`;
-    }
-    if (meterBarCurious) {
-        const curiousPercent = Math.max(0, Math.min(100, (gameState.stats.curious / MAX_STAT_VALUE) * 100));
-        meterBarCurious.style.width = `${curiousPercent}%`;
-    }
-    if (meterBarBold) {
-        const boldPercent = Math.max(0, Math.min(100, (gameState.stats.bold / MAX_STAT_VALUE) * 100));
-        meterBarBold.style.width = `${boldPercent}%`;
-    }
+    // Cold/Hot
+    const coldHotTotal = gameState.cold + gameState.hot;
+    const coldPercent = coldHotTotal > 0 ? (gameState.cold / coldHotTotal) * 100 : 50;
+    const hotPercent = coldHotTotal > 0 ? (gameState.hot / coldHotTotal) * 100 : 50;
+    document.getElementById('stat-cold').style.width = `${coldPercent}%`;
+    document.getElementById('stat-hot').style.width = `${hotPercent}%`;
+
+    // --- 0-100 Stats ---
+    document.getElementById('stat-curiosity').style.width = `${gameState.mindset_curious * 10}%`; // Assuming mindset scores are 0-10
+    document.getElementById('stat-blush').style.width = `${gameState.blush}%`;
+    document.getElementById('stat-danger').style.width = `${gameState.danger}%`;
+    document.getElementById('stat-male_gaze').style.width = `${gameState.male_gaze}%`;
+    document.getElementById('stat-defense_barrier').style.width = `${gameState.defense_barrier}%`;
+    document.getElementById('stat-social_friction').style.width = `${gameState.social_friction}%`;
+    document.getElementById('stat-restriction').style.width = `${gameState.restriction}%`;
+    document.getElementById('stat-unfamiliarity').style.width = `${gameState.unfamiliarity}%`;
 }
 
 /**
@@ -970,7 +994,7 @@ async function loadGame() {
             
             // Re-render the UI with loaded data
             recalculateStats();
-            updateMeters();
+            updateStatsUI();
             await renderScene(gameState.currentScene); // Re-render narrative and choices
             
             // Also regenerate image for the loaded state
@@ -1036,7 +1060,7 @@ function handleChoice(choice) {
 
     // Recalculate stats and update UI after any choice
     recalculateStats();
-    updateMeters();
+    updateStatsUI();
 
     // Render the next scene
     renderScene(nextScene);
@@ -1266,7 +1290,7 @@ async function initializeFirebase() {
         if (loadButton) loadButton.disabled = true;
         
         // Do not render the scene on initial load, wait for user to click "Begin"
-        updateMeters();
+        updateStatsUI();
         return; // Stop initialization
     }
 
@@ -1292,13 +1316,13 @@ async function initializeFirebase() {
         console.log("Firebase Initialized. User ID:", userId);
         
         // Now that Firebase is ready, the user can begin the game.
-        updateMeters();
+        updateStatsUI();
 
     } catch (error) {
         console.error("Firebase initialization error:", error);
         narrativeContainer.innerHTML = `<p class="mb-4 text-red-400">Error: Firebase connection failed. ${error.message}</p>`;
         // Still try to update meters, but the game won't start
-        updateMeters();
+        updateStatsUI();
     }
 }
 
@@ -1337,7 +1361,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let newStats = {};
         ALL_STATS.forEach(stat => newStats[stat] = 0);
         gameState.stats = newStats;
-        updateMeters();
+        updateStatsUI();
         mainMenuContainer.classList.add('hidden');
         renderWardrobeStep("top");
     };
@@ -1374,7 +1398,7 @@ function renderWardrobeStep(step) {
                     characterImage.src = item.imageUrl;
                 }
                 recalculateStats();
-                updateMeters();
+                updateStatsUI();
                 renderWardrobeStep(choice.nextStep);
             };
         } else {
